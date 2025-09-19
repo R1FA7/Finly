@@ -33,7 +33,7 @@ axiosInstance.interceptors.response.use(
   async (error)=>{
     const originalRequest = error.config 
 
-    if(error.response?.status===401 && !originalRequest._retry){//first time 401 error
+    if(error.response?.status===401 && !originalRequest._retry && !originalRequest.url.includes(API_PATHS.AUTH.REFRESH_ACCESS_TOKEN)){//first time 401 error
       originalRequest._retry=true 
       try{
         const {data} = await axiosInstance.post(API_PATHS.AUTH.REFRESH_ACCESS_TOKEN,{},{
