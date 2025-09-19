@@ -10,7 +10,8 @@ import transactionRouter from "./routes/transactionRoutes.js"
 const app = express()
 const port = process.env.PORT || 3000
 const allowedOrigins =[
-  'http://localhost:5173'
+  'http://localhost:5173',
+  "https://finly-production-79f0.up.railway.app",
 ]
 
 app.use(express.json())
