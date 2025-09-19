@@ -1,0 +1,57 @@
+### LOGIN
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "minhazulkabir510@gmail.com",
+  "password": "123465"
+}
+
+### CREATE INCOME
+POST http://localhost:3000/api/transaction/add
+Content-Type: application/json
+Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODlkMjRkZDAxMzkzYThlMDFiODAxOCIsImlhdCI6MTc1NjIzMjY2MCwiZXhwIjoxNzU2MjMzNTYwfQ.IIJY37PIxO5cyzhQPKijmyiN9-AgQMgHbHOkZkAROAA
+
+{
+  "type": "income",
+  "icon": "💰",
+  "source": "Freelance",
+  "amount": 4800,
+  "date": "2025-08-25T10:12:00.000Z"
+}
+
+### Get INCOMES
+GET http://localhost:3000/api/transaction/get?type=income
+Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODlkMjRkZDAxMzkzYThlMDFiODAxOCIsImlhdCI6MTc1NjIzMjY2MCwiZXhwIjoxNzU2MjMzNTYwfQ.IIJY37PIxO5cyzhQPKijmyiN9-AgQMgHbHOkZkAROAA
+
+
+### Delete INCOME/EXPENSE
+delete http://localhost:3000/api/transaction/68adfbef1e418633bf822169
+
+
+###Download INCOME
+GET http://localhost:3000/api/transaction/downloadexcel?type=income
+Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODlkMjRkZDAxMzkzYThlMDFiODAxOCIsImlhdCI6MTc1NjIzMjY2MCwiZXhwIjoxNzU2MjMzNTYwfQ.IIJY37PIxO5cyzhQPKijmyiN9-AgQMgHbHOkZkAROAA
+
+### CREATE EXPENSE
+POST http://localhost:3000/api/transaction/add
+Content-Type: application/json
+Cookie: refreshToken= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODlkMjRkZDAxMzkzYThlMDFiODAxOCIsImlhdCI6MTc1NjE0MTM4NywiZXhwIjoxNzU2NzQ2MTg3fQ.mOebQ7pmHXahV-ux8bHAadTNKPBX13Rsl4bwds_MPC8
+
+{
+  "type": "expense",
+  "icon": "🛒",
+  "source": "Groceries",
+  "amount": 150,
+  "date": "2025-08-25T12:00:00.000Z"
+}
+
+### Get EXPENSES
+GET http://localhost:3000/api/transaction/get?type=expense
+
+###Download EXpense
+GET http://localhost:3000/api/transaction/downloadexcel?type=expense
+
+
+###Get Dashboard
+GET http://localhost:3000/api/dashboard/

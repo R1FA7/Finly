@@ -1,0 +1,31 @@
+export const BASE_API = "/api/v1"
+
+export const API_PATHS = {
+  AUTH: {
+    REGISTER: `${BASE_API}/auth/register`,
+    LOGIN: `${BASE_API}/auth/login`,
+    GET_USER_INFO: `${BASE_API}/auth/getUserInfo`,
+    REFRESH_ACCESS_TOKEN : `${BASE_API}/auth/refresh-token`,
+    LOGOUT: `${BASE_API}/auth/logout`,
+    UPDATE : `${BASE_API}/auth/update-profile`,
+    SEND_OTP: `${BASE_API}/auth/send-reset-otp`,
+    VERIFY_OTP: `${BASE_API}/auth/verify-reset-otp`,
+    RESET_PASSWORD: `${BASE_API}/auth/reset-password`,
+    VERIFY_ACCOUNT: `${BASE_API}/auth/verify-account`,
+    ACCOUNT_VERIFICATION_OTP:`${BASE_API}/auth/send-verify-otp`
+  },
+  DASHBOARD:{
+    GET_DATA: `${BASE_API}/dashboard`,
+  },
+  TRANSACTION:{
+    GET_ALL: (type)=>`${BASE_API}/transaction?type=${type}`,
+
+    ADD: `${BASE_API}/transaction`,
+
+    UPDATE: (id)=> `${BASE_API}/transaction/${id}`,
+
+    DELETE: (id) =>`${BASE_API}/transaction/${id}`,
+
+    DOWNLOAD_EXCEL: (type) =>`${BASE_API}/transaction/downloadexcel?type=${type}`
+  }
+}
