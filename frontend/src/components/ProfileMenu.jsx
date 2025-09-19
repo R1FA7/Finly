@@ -1,3 +1,7 @@
+import {
+  CheckBadgeIcon,
+  ExclamationCircleIcon,
+} from "@heroicons/react/24/outline";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./Button";
@@ -35,13 +39,26 @@ export const ProfileMenu = ({ user, onLogout }) => {
         text-blue-200 font-bold text-lg
         shadow-md hover:shadow-xl transition-all duration-300
         transform hover:scale-110 cursor-pointer
-        ring-4 ring-cyan-300/60"
+        ring-4 ring-cyan-300/60
+        relative"
         title={user.name}
         onClick={() => setIsOpen(!isOpen)}
       >
         {user.name.charAt(0).toUpperCase()}
       </div>
-
+      {user?.isAccountVerified ? (
+        <CheckBadgeIcon
+          className="absolute -top-2 right-0 h-5 w-5 text-cyan-400 rounded-full bg-white border border-cyan-400 cursor-pointer"
+          title="Verified account"
+          onClick={() => navigate("/verify-email")}
+        />
+      ) : (
+        <ExclamationCircleIcon
+          className="absolute -top-2 right-0 h-5 w-5 text-red-500 rounded-full bg-white border border-red-500 cursor-pointer"
+          title="Unverified account"
+          onClick={() => navigate("/verify-email")}
+        />
+      )}
       {isOpen && (
         <div
           ref={menuRef}
@@ -67,14 +84,6 @@ export const ProfileMenu = ({ user, onLogout }) => {
                 className="text-xs text-blue-600 cursor-pointer hover:underline mt-1"
               >
                 Update Profile
-              </button>
-              <button
-                onClick={() => {
-                  navigate("/updateProfile");
-                }}
-                className="text-xs text-blue-600 cursor-pointer hover:underline mt-1"
-              >
-                Verify Email
               </button>
             </div>
           </div>

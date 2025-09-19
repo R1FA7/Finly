@@ -9,9 +9,12 @@ import { toast } from "react-toastify";
 import { Button } from "../components/Button";
 import { LineBreakDownChart } from "../components/charts/LineBreakDownChart";
 import { DashboardToolBar } from "../components/DashboardToolBar";
+import { LoadingSpinner } from "../components/loaders/LoadingSpinner";
 import { SummaryCard } from "../components/SummaryCard";
 import { TransactionForm } from "../components/TransactionForm";
 import { TransactionList } from "../components/TransactionList";
+import { useButtonLoader } from "../hooks/useButtonLoader";
+import { useLoader } from "../hooks/useLoader";
 import { API_PATHS } from "../utils/apiPaths";
 import axiosInstance from "../utils/axiosInstance";
 export const DashboardPage = () => {
@@ -20,6 +23,8 @@ export const DashboardPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [filters, setFilters] = useState({});
   const [search, setSearch] = useState("");
+  const { loading, withLoading } = useLoader();
+  const { btnLoadingMap, withBtnLoading } = useButtonLoader();
 
   const fetchDashboardStats = async () => {
     try {
@@ -43,70 +48,78 @@ export const DashboardPage = () => {
   };
 
   useEffect(() => {
-    fetchDashboardStats();
-    fetchFilteredTxns({ search, ...filters });
+    withLoading(async () => {
+      await fetchDashboardStats();
+      await fetchFilteredTxns({ search, ...filters });
+    });
   }, []);
 
-  const handleSubmit = async (txnData) => {
-    const cleanedTxnData = {
-      type: txnData.type,
-      source: txnData.source,
-      amount: txnData.amount,
-      date: txnData.date,
-    };
-    try {
-      const res = await axiosInstance.post(
-        API_PATHS.TRANSACTION.ADD,
-        cleanedTxnData
-      );
-      if (res.data.success) {
-        toast.success(`${txnData.type} data added successfully`);
-        await fetchDashboardStats();
-        setShowForm(false);
-      } else {
-        toast.error("Server Error. Try again.");
+  const handleSubmit = (txnData) => {
+    withBtnLoading("submitTxns", async () => {
+      const cleanedTxnData = {
+        type: txnData.type,
+        source: txnData.source,
+        amount: txnData.amount,
+        date: txnData.date,
+      };
+      try {
+        const res = await axiosInstance.post(
+          API_PATHS.TRANSACTION.ADD,
+          cleanedTxnData
+        );
+        if (res.data.success) {
+          toast.success(`${txnData.type} data added successfully`);
+          await fetchDashboardStats();
+          await fetchFilteredTxns({ search, ...filters });
+          setShowForm(false);
+        } else {
+          toast.error("Server Error. Try again.");
+        }
+      } catch (err) {
+        console.error("Error saving transaction", err);
+        toast.error("Failed to save transaction. Try again.");
       }
-    } catch (err) {
-      console.error("Error saving transaction", err);
-      toast.error("Failed to save transaction. Try again.");
-    }
+    });
   };
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     const choice = window.prompt(
       "Download what type of transactions?(income/expense/both)",
       "income"
     );
     if (!choice) return;
-    const downloadFile = async (type) => {
-      try {
-        const res = await axiosInstance.get(
-          API_PATHS.TRANSACTION.DOWNLOAD_EXCEL(type),
-          { responseType: "blob" }
-        );
-        const url = window.URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `${type}_details.xlsx`);
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode.removeChild(link);
-        window.URL.revokeObjectURL(url);
 
-        console.log(res);
-      } catch (err) {
-        console.error("Error downloading file", err);
-        toast.error("Failed to download the file. Please try again.");
+    withBtnLoading("downloadTxns", async () => {
+      const downloadFile = async (type) => {
+        try {
+          const res = await axiosInstance.get(
+            API_PATHS.TRANSACTION.DOWNLOAD_EXCEL(type),
+            { responseType: "blob" }
+          );
+          const url = window.URL.createObjectURL(new Blob([res.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", `${type}_details.xlsx`);
+          document.body.appendChild(link);
+          link.click();
+          link.parentNode.removeChild(link);
+          window.URL.revokeObjectURL(url);
+
+          console.log(res);
+        } catch (err) {
+          console.error("Error downloading file", err);
+          toast.error("Failed to download the file. Please try again.");
+        }
+      };
+      if (choice === "both") {
+        await downloadFile("income");
+        await downloadFile("expense");
+      } else if (["income", "expense"].includes(choice)) {
+        await downloadFile(choice);
+      } else {
+        toast.error("Invalid option.");
       }
-    };
-    if (choice === "both") {
-      await downloadFile("income");
-      await downloadFile("expense");
-    } else if (["income", "expense"].includes(choice)) {
-      await downloadFile(choice);
-    } else {
-      toast.error("Invalid option.");
-    }
+    });
   };
 
   const handleSearch = (query) => {
@@ -118,6 +131,25 @@ export const DashboardPage = () => {
     setFilters(newFilters);
     fetchFilteredTxns({ search, ...newFilters });
   };
+
+  // const sourceWiseIncome = useMemo(() => {
+  //   const res = incomeData.reduce((acc, { source, amount }) => {
+  //     acc[source] = (acc[source] || 0) + amount;
+  //     return acc;
+  //   }, {});
+  //   console.log(res);
+  //   return Object.entries(res)
+  //     .map(([source, amount]) => ({ source, amount }))
+  //     .sort((a, b) => b.amount - a.amount);
+  // }, [incomeData]);
+
+  if (loading) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="">
@@ -137,41 +169,42 @@ export const DashboardPage = () => {
           <PlusCircleIcon className="w-5 h-5" />
           Add Transaction
         </Button>
-        <div className="flex flex-col md:flex-row justify-between items-center md:items-center gap-6 mb-6">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 justify-center">
+        <div className="flex flex-col md:flex-row justify-center items-center md:items-center gap-6 mb-6">
+          <div className="flex flex-wrap justify-center gap-2">
             <SummaryCard
               icon={<ScaleIcon />}
               title="Total Balance"
               value={dashboardStats?.totalBalance}
-              className="bg-slate-50 border border-slate-200 text-slate-800 min-w-[150px]"
+              className="bg-slate-50 border border-slate-200 text-slate-800 w-[180px]"
             />
+
             <SummaryCard
               icon={<ArrowTrendingUpIcon />}
               title="Total Income"
               value={dashboardStats?.totalIncome}
-              className="bg-green-50 border border-green-200 text-green-600 min-w-[150px]"
+              className="bg-green-50 border border-green-200 text-green-600 w-[180px]"
             />
             <SummaryCard
               icon={<ArrowTrendingDownIcon />}
               title="Total Expense"
               value={dashboardStats?.totalExpense}
-              className="bg-red-50 border border-red-200 text-red-600 min-w-[150px]"
+              className="bg-red-50 border border-red-200 text-red-600 w-[180px]"
             />
             <SummaryCard
               icon={<ArrowTrendingUpIcon />}
-              title="Income Last 7 Days"
+              title="Income (7d)"
               value={
                 dashboardStats?.incomeVsExpense?.weekly?.income?.total || 0
               }
-              className="bg-green-50 border border-green-200 text-green-600 min-w-[150px]"
+              className="bg-green-50 border border-green-200 text-green-600 w-[180px]"
             />
             <SummaryCard
               icon={<ArrowTrendingDownIcon />}
-              title="Expense Last 7 Days"
+              title="Expense (7d)"
               value={
                 dashboardStats?.incomeVsExpense?.weekly?.expense?.total || 0
               }
-              className="bg-red-50 border border-red-200 text-red-600 min-w-[150px]"
+              className="bg-red-50 border border-red-200 text-red-600 w-[180px]"
             />
             {/* <SummaryCard
               icon={<ArrowTrendingUpIcon />}
@@ -197,6 +230,7 @@ export const DashboardPage = () => {
           typeSelectDisabled={false}
           onSubmit={(t) => handleSubmit(t)}
           onClose={() => setShowForm(false)}
+          loading={btnLoadingMap.submitTxns}
         />
       )}
       <div className="bg-white rounded-lg shadow-md p-4 mx-1.5 mb-1.5 mt-8 border border-gray-200">
@@ -204,7 +238,15 @@ export const DashboardPage = () => {
           onSearch={(query) => handleSearch(query)}
           onFilterChange={(newFilters) => handleFilterChange(newFilters)}
           onDownload={() => handleDownload()}
-          sourceOptions={["Salary", "Groceries", "Gift"]}
+          sourceOptions={{
+            income: dashboardStats?.incomeSources || [],
+            expense: dashboardStats?.expenseSources || [],
+            all: [
+              ...(dashboardStats?.incomeSources || []),
+              ...(dashboardStats?.expenseSources || []),
+            ],
+          }}
+          loading={btnLoadingMap.downloadTxns}
         />
         <TransactionList transactions={filteredTxns} callFrom={"dashboard"} />
       </div>

@@ -15,6 +15,7 @@ export const TransactionForm = ({
   initialData = {},
   onClose,
   onSubmit,
+  loading,
 }) => {
   const safeInitialData = initialData || {};
 
@@ -130,9 +131,19 @@ export const TransactionForm = ({
               className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-400 "
             />
           </div>
-          <Button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition cursor-pointer">
-            {safeInitialData._id ? "Update " : "Add "}
-            {type.charAt(0).toUpperCase() + type.slice(1)}
+          <Button
+            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition cursor-pointer disabled:opacity-50"
+            type="submit"
+            disabled={loading}
+          >
+            {loading
+              ? safeInitialData._id
+                ? "Updating..."
+                : "Adding..."
+              : safeInitialData._id
+              ? "Update "
+              : "Add "}
+            {!loading && type.charAt(0).toUpperCase() + type.slice(1)}
           </Button>
         </form>
       </div>

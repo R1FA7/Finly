@@ -1,15 +1,20 @@
 import {
   ArrowDownTrayIcon,
-  CurrencyBangladeshiIcon,
+  ArrowTrendingUpIcon,
   PlusCircleIcon,
+  TrophyIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "../components/Button";
 import { BarBreakdownChart } from "../components/charts/BarBreakDownChart.jsx";
 import { HorizontalBarBreakdown } from "../components/charts/HorizontalBreakDownBar.jsx";
+import { LoadingSpinner } from "../components/loaders/LoadingSpinner.jsx";
+import { SummaryCard } from "../components/SummaryCard.jsx";
 import { TransactionForm } from "../components/TransactionForm";
 import { TransactionList } from "../components/TransactionList.jsx";
+import { useButtonLoader } from "../hooks/useButtonLoader.js";
+import { useLoader } from "../hooks/useLoader.js";
 import { API_PATHS } from "../utils/apiPaths.js";
 import axiosInstance from "../utils/axiosInstance.js";
 export const IncomePage = () => {
@@ -27,6 +32,10 @@ export const IncomePage = () => {
   const [editingTxn, setEditingTxn] = useState(null);
   const [iDashboardData, setIDashboardData] = useState();
   const [selectedFrequency, setSelectedFrequency] = useState("weekly");
+  const [searchActive, setSearchActive] = useState(false);
+
+  const { loading, withLoading } = useLoader();
+  const { btnLoadingMap, withBtnLoading } = useButtonLoader();
 
   const fetchIncome = async () => {
     try {
@@ -47,7 +56,9 @@ export const IncomePage = () => {
     }
   };
   useEffect(() => {
-    fetchIncome();
+    withLoading(async () => {
+      fetchIncome();
+    });
   }, []);
 
   const sourceWiseIncome = useMemo(() => {
@@ -72,39 +83,43 @@ export const IncomePage = () => {
   }, [incomeData]);
   const handleClick = () => {
     const query = searchKey.trim().toLowerCase();
+    if (!query) return;
+    setSearchActive(true);
     const filtered = incomeData.filter((item) =>
       item.source.toLowerCase().includes(query)
     );
     setFilteredIncome(filtered);
   };
   const handleSubmit = async (txnData) => {
-    try {
-      const cleanedTxnData = {
-        type: txnData.type,
-        source: txnData.source,
-        amount: txnData.amount,
-        date: txnData.date,
-      };
+    withBtnLoading("submitIncome", async () => {
+      try {
+        const cleanedTxnData = {
+          type: txnData.type,
+          source: txnData.source,
+          amount: txnData.amount,
+          date: txnData.date,
+        };
 
-      if (editingTxn) {
-        await axiosInstance.put(
-          API_PATHS.TRANSACTION.UPDATE(editingTxn._id),
-          cleanedTxnData
-        );
-        toast.success("Income updated successfully");
-      } else {
-        await axiosInstance.post(API_PATHS.TRANSACTION.ADD, cleanedTxnData);
-        toast.success("Income added successfully!");
+        if (editingTxn) {
+          await axiosInstance.put(
+            API_PATHS.TRANSACTION.UPDATE(editingTxn._id),
+            cleanedTxnData
+          );
+          toast.success("Income updated successfully");
+        } else {
+          await axiosInstance.post(API_PATHS.TRANSACTION.ADD, cleanedTxnData);
+          toast.success("Income added successfully!");
+        }
+        await fetchIncome();
+        setFilteredIncome([]);
+        setSearchKey("");
+        setShowForm(false);
+        setEditingTxn(null);
+      } catch (err) {
+        console.error("Error saving transaction", err);
+        toast.error("Failed to save transaction. Try again.");
       }
-      await fetchIncome();
-      setFilteredIncome([]);
-      setSearchKey("");
-      setShowForm(false);
-      setEditingTxn(null);
-    } catch (err) {
-      console.error("Error saving transaction", err);
-      toast.error("Failed to save transaction. Try again.");
-    }
+    });
   };
   const handleDelete = async (txnId) => {
     try {
@@ -147,6 +162,7 @@ export const IncomePage = () => {
   useEffect(() => {
     if (!searchKey || searchKey.trim() === "") {
       setFilteredIncome([]);
+      setSearchActive(false);
     }
   }, [searchKey]);
   const handleEdit = (txn) => {
@@ -155,27 +171,31 @@ export const IncomePage = () => {
     setShowForm(true);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
   return (
     <div>
       <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200">
-        <div className="flex flex-col md:flex-row justify-between items-center md:items-center gap-6 mb-6">
-          <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
-            <div className="p-5 bg-green-50 border border-green-200 rounded-lg text-center shadow hover:shadow-md transition w-60">
-              <p className="text-sm text-gray-600">💵 Total Income</p>
-              <p className="text-3xl font-bold text-green-700 mt-1 flex justify-center items-center">
-                <CurrencyBangladeshiIcon className="h-8 w-8 mr-1" />
-                {totalIncome}
-              </p>
-            </div>
+        <div className="flex flex-col md:flex-row justify-center items-center md:items-center gap-6 mb-6">
+          <div className="flex flex-wrap justify-center gap-6">
+            <SummaryCard
+              icon={<ArrowTrendingUpIcon />}
+              title="Total Income"
+              value={totalIncome}
+              className="bg-green-50 border border-green-200 text-green-600 w-[200px]"
+            />
 
-            {/* Highest Income */}
-            <div className="p-5 bg-blue-50 border border-blue-200 rounded-lg text-center shadow hover:shadow-md transition min-w-[220px]">
-              <p className="text-sm text-gray-600">📈 Highest Income</p>
-              <p className="text-3xl font-bold text-gray-600 mt-1 flex justify-center items-center">
-                <CurrencyBangladeshiIcon className="h-8 w-8 mr-1" />
-                {maxIncome}
-              </p>
-            </div>
+            <SummaryCard
+              icon={<TrophyIcon />}
+              title="Highest Income"
+              value={maxIncome}
+              className="bg-green-100 border border-green-300 text-green-700 w-[200px]"
+            />
           </div>
         </div>
 
@@ -222,18 +242,23 @@ export const IncomePage = () => {
                 setEditingTxn(null);
               }}
               onSubmit={handleSubmit}
+              loading={btnLoadingMap.submitIncome}
             />
           </div>
         )}
       </div>
       <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200">
-        <TransactionList
-          type={"income"}
-          transactions={filteredIncome.length > 0 ? filteredIncome : incomeData}
-          onEdit={(t) => handleEdit(t)}
-          onDelete={(id) => handleDelete(id)}
-          onDownloadExcel={() => handleDownloadExcel()}
-        />
+        {searchActive && filteredIncome.length === 0 ? (
+          <div className="text-center text-gray-500 py-8">Not found.</div>
+        ) : (
+          <TransactionList
+            type={"income"}
+            transactions={searchActive ? filteredIncome : incomeData}
+            onEdit={(t) => handleEdit(t)}
+            onDelete={(id) => handleDelete(id)}
+            onDownloadExcel={() => handleDownloadExcel()}
+          />
+        )}
       </div>
       <div className="bg-white rounded-lg shadow-lg p-4 m-1.5 border border-gray-200 relative">
         <select

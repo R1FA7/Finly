@@ -1,15 +1,21 @@
 import {
   ArrowDownTrayIcon,
-  CurrencyBangladeshiIcon,
+  ArrowTrendingDownIcon,
   PlusCircleIcon,
+  ShieldExclamationIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "../components/Button";
 import { BarBreakdownChart } from "../components/charts/BarBreakDownChart.jsx";
 import { HorizontalBarBreakdown } from "../components/charts/HorizontalBreakDownBar.jsx";
+import { ButtonLoader } from "../components/loaders/ButtonLoader.jsx";
+import { LoadingSpinner } from "../components/loaders/LoadingSpinner.jsx";
+import { SummaryCard } from "../components/SummaryCard.jsx";
 import { TransactionForm } from "../components/TransactionForm";
 import { TransactionList } from "../components/TransactionList.jsx";
+import { useButtonLoader } from "../hooks/useButtonLoader.js";
+import { useLoader } from "../hooks/useLoader.js";
 import { API_PATHS } from "../utils/apiPaths.js";
 import axiosInstance from "../utils/axiosInstance.js";
 export const ExpensePage = () => {
@@ -27,6 +33,9 @@ export const ExpensePage = () => {
   const [editingTxn, setEditingTxn] = useState(null);
   const [eDashboardData, setEDashboardData] = useState();
   const [selectedFrequency, setSelectedFrequency] = useState("weekly");
+  const [searchActive, setSearchActive] = useState(false);
+  const { loading, withLoading } = useLoader();
+  const { btnLoadingMap, withBtnLoading } = useButtonLoader();
 
   const fetchExpense = async () => {
     try {
@@ -47,7 +56,9 @@ export const ExpensePage = () => {
     }
   };
   useEffect(() => {
-    fetchExpense();
+    withLoading(async () => {
+      fetchExpense();
+    });
   }, []);
 
   const sourceWiseExpense = useMemo(() => {
@@ -71,40 +82,46 @@ export const ExpensePage = () => {
     return { totalExpense, maxExpense };
   }, [expenseData]);
   const handleClick = () => {
-    const query = searchKey.trim().toLowerCase();
-    const filtered = expenseData.filter((item) =>
-      item.source.toLowerCase().includes(query)
-    );
-    setFilteredExpense(filtered);
+    withBtnLoading("search", async () => {
+      const query = searchKey.trim().toLowerCase();
+      if (!query) return;
+      setSearchActive(true);
+      const filtered = expenseData.filter((item) =>
+        item.source.toLowerCase().includes(query)
+      );
+      setFilteredExpense(filtered);
+    });
   };
-  const handleSubmit = async (txnData) => {
-    try {
-      const cleanedTxnData = {
-        type: txnData.type,
-        source: txnData.source,
-        amount: txnData.amount,
-        date: txnData.date,
-      };
+  const handleSubmit = (txnData) => {
+    withBtnLoading("submitExpense", async () => {
+      try {
+        const cleanedTxnData = {
+          type: txnData.type,
+          source: txnData.source,
+          amount: txnData.amount,
+          date: txnData.date,
+        };
 
-      if (editingTxn) {
-        await axiosInstance.put(
-          API_PATHS.TRANSACTION.UPDATE(editingTxn._id),
-          cleanedTxnData
-        );
-        toast.success("Expense updated successfully");
-      } else {
-        await axiosInstance.post(API_PATHS.TRANSACTION.ADD, cleanedTxnData);
-        toast.success("Expense added successfully!");
+        if (editingTxn) {
+          await axiosInstance.put(
+            API_PATHS.TRANSACTION.UPDATE(editingTxn._id),
+            cleanedTxnData
+          );
+          toast.success("Expense updated successfully");
+        } else {
+          await axiosInstance.post(API_PATHS.TRANSACTION.ADD, cleanedTxnData);
+          toast.success("Expense added successfully!");
+        }
+        await fetchExpense();
+        setFilteredExpense([]);
+        setSearchKey("");
+        setShowForm(false);
+        setEditingTxn(null);
+      } catch (err) {
+        console.error("Error saving transaction", err);
+        toast.error("Failed to save transaction. Try again.");
       }
-      await fetchExpense();
-      setFilteredExpense([]);
-      setSearchKey("");
-      setShowForm(false);
-      setEditingTxn(null);
-    } catch (err) {
-      console.error("Error saving transaction", err);
-      toast.error("Failed to save transaction. Try again.");
-    }
+    });
   };
   const handleDelete = async (txnId) => {
     try {
@@ -147,6 +164,7 @@ export const ExpensePage = () => {
   useEffect(() => {
     if (!searchKey || searchKey.trim() === "") {
       setFilteredExpense([]);
+      setSearchActive(false);
     }
   }, [searchKey]);
   const handleEdit = (txn) => {
@@ -155,27 +173,32 @@ export const ExpensePage = () => {
     setShowForm(true);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200">
-        <div className="flex flex-col md:flex-row justify-between items-center md:items-center gap-6 mb-6">
-          <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
-            <div className="p-5 bg-red-50 border border-red-200 rounded-lg text-center shadow hover:shadow-md transition w-60">
-              <p className="text-sm text-gray-600">💵 Total Expense</p>
-              <p className="text-3xl font-bold text-red-700 mt-1 flex justify-center items-center">
-                <CurrencyBangladeshiIcon className="h-8 w-8 mr-1" />
-                {totalExpense}
-              </p>
-            </div>
+        <div className="flex flex-col md:flex-row justify-center items-center md:items-center gap-6 mb-6">
+          <div className="flex flex-wrap justify-center gap-6">
+            <SummaryCard
+              icon={<ArrowTrendingDownIcon />}
+              title="Total Expense"
+              value={totalExpense}
+              className="bg-red-50 border border-red-200 text-red-600 w-[200px]"
+            />
 
-            {/* Highest Expense */}
-            <div className="p-5 bg-blue-50 border border-blue-200 rounded-lg text-center shadow hover:shadow-md transition min-w-[220px]">
-              <p className="text-sm text-gray-600">📈 Highest Expense</p>
-              <p className="text-3xl font-bold text-gray-600 mt-1 flex justify-center items-center">
-                <CurrencyBangladeshiIcon className="h-8 w-8 mr-1" />
-                {maxExpense}
-              </p>
-            </div>
+            <SummaryCard
+              icon={<ShieldExclamationIcon />}
+              title="Highest Expense"
+              value={maxExpense}
+              className="bg-red-100 border border-red-300 text-red-700 w-[200px]"
+            />
           </div>
         </div>
 
@@ -191,7 +214,11 @@ export const ExpensePage = () => {
             onClick={handleClick}
             className="bg-gray-100 hover:bg-gray-200 text-gray-700"
           >
-            Search
+            {btnLoadingMap.search ? (
+              <ButtonLoader text="searching..." size="xs" />
+            ) : (
+              "Search"
+            )}
           </Button>
         </div>
         <div className="flex justify-between mt-5 self-start md:self-center gap-4">
@@ -222,20 +249,23 @@ export const ExpensePage = () => {
                 setEditingTxn(null);
               }}
               onSubmit={handleSubmit}
+              loading={btnLoadingMap.submitExpense}
             />
           </div>
         )}
       </div>
       <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200">
-        <TransactionList
-          type={"expense"}
-          transactions={
-            filteredExpense.length > 0 ? filteredExpense : expenseData
-          }
-          onEdit={(t) => handleEdit(t)}
-          onDelete={(id) => handleDelete(id)}
-          onDownloadExcel={() => handleDownloadExcel()}
-        />
+        {searchActive && filteredExpense.length === 0 ? (
+          <div className="text-center text-gray-500 py-8"> Not found. </div>
+        ) : (
+          <TransactionList
+            type={"expense"}
+            transactions={searchActive ? filteredExpense : expenseData}
+            onEdit={(t) => handleEdit(t)}
+            onDelete={(id) => handleDelete(id)}
+            onDownloadExcel={() => handleDownloadExcel()}
+          />
+        )}
       </div>
       <div className="bg-white rounded-lg shadow-lg p-4 m-1.5 border border-gray-200 relative">
         <select

@@ -11,7 +11,8 @@ export const DashboardToolBar = ({
   onSearch,
   onFilterChange,
   onDownload,
-  sourceOptions = [],
+  sourceOptions = {},
+  loading,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [localFilters, setLocalFilters] = useState({
@@ -41,6 +42,7 @@ export const DashboardToolBar = ({
     onFilterChange(resetFilters);
   };
   useEffect(() => {
+    console.log(sourceOptions);
     const tId = setTimeout(() => {
       onSearch(searchTerm);
     }, 300);
@@ -63,9 +65,9 @@ export const DashboardToolBar = ({
       </div>
       <div className="flex w-full md:w-auto justify-between md:justify-start gap-3">
         {/* Download  */}
-        <Button onClick={onDownload}>
+        <Button onClick={onDownload} disabled={loading}>
           <ArrowDownTrayIcon className="w-5 h-5" />
-          Download
+          {loading ? "Downloading..." : "Download"}
         </Button>
         {/* Filter Popover */}
         <Popover className="relative">
@@ -95,7 +97,7 @@ export const DashboardToolBar = ({
                 className="border border-gray-300 rounded-md px-2 py-1"
               >
                 <option value="">All Sources</option>
-                {sourceOptions.map((src) => (
+                {sourceOptions[localFilters.type || "all"].map((src) => (
                   <option key={src} value={src}>
                     {src}
                   </option>

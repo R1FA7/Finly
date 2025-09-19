@@ -75,7 +75,7 @@ export const AccountForm = ({ user, onEdit }) => {
           <input
             id="password"
             type={showPassword ? "text" : "password"}
-            placeholder="Password must be at least 6 characters long"
+            placeholder="Must be at least 6 characters long"
             name="password"
             value={info.password}
             onChange={handleChange}

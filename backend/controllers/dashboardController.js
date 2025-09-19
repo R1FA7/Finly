@@ -231,6 +231,10 @@ export const getDashboardData = async (req, res) => {
       getFullBreakDown(userId, "week"),
     ]);
 
+    //sources
+    const incomeSources = await transactionModel.distinct("source",{type:"income"})
+    const expenseSources = await transactionModel.distinct("source",{type:"expense"})
+
     res.status(200).json({
       success: true,
       message: "Dashboard Data fetched successfully",
@@ -238,6 +242,8 @@ export const getDashboardData = async (req, res) => {
         totalBalance,
         totalIncome,
         totalExpense,
+        incomeSources,
+        expenseSources,
         incomeVsExpense: {
           weekly: {
             income: lastWeeksIncome,
