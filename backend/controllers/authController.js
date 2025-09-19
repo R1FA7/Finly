@@ -47,15 +47,19 @@ export async function register(req,res){
         maxAge : 7 * 24 * 60 * 60 * 1000
       }
     )
+    try {
+      const mailOptions = {
+        from : process.env.SENDER_EMAIL,
+        to : email,
+        subject : 'Welcome to Arena.',
+        text : `Welcome to this arena. Your account has been created with email id: ${email}`
+      }
 
-    const mailOptions = {
-      from : process.env.SENDER_EMAIL,
-      to : email,
-      subject : 'Welcome to Arena.',
-      text : `Welcome to this arena. Your account has been created with email id: ${email}`
+      await transporter.sendMail(mailOptions)
+      console.log('Welcome email sent to', email);
+    } catch (mailError) {
+      console.warn('Failed to send welcome email:', mailError.message);
     }
-
-    await transporter.sendMail(mailOptions)
 
     return res.status(201).json({
       success: true,

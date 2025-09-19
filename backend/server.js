@@ -7,6 +7,8 @@ import authRouter from "./routes/authRoutes.js"
 import dashboardRouter from "./routes/dashboardRoutes.js"
 import transactionRouter from "./routes/transactionRoutes.js"
 
+connectDB() 
+
 const app = express()
 const port = process.env.PORT || 3000
 const allowedOrigins =[
@@ -18,7 +20,6 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(cors({origin: allowedOrigins, credentials:true}))
 
-connectDB() 
 
 app.get('/',(req,res)=>{
   res.send("YUP")

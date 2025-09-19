@@ -57,7 +57,7 @@ export const ExpensePage = () => {
   };
   useEffect(() => {
     withLoading(async () => {
-      fetchExpense();
+      await fetchExpense();
     });
   }, []);
 

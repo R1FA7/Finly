@@ -248,7 +248,11 @@ export const DashboardPage = () => {
           }}
           loading={btnLoadingMap.downloadTxns}
         />
-        <TransactionList transactions={filteredTxns} callFrom={"dashboard"} />
+        <TransactionList
+          transactions={filteredTxns}
+          onExcelDownload={() => handleDownload()}
+          callFrom={"dashboard"}
+        />
       </div>
       <div className="bg-white rounded-lg shadow-md p-4 mx-1.5 mb-1.5 mt-8 border border-gray-200 relative">
         <LineBreakDownChart data={dashboardStats?.breakdowns?.weekly} />

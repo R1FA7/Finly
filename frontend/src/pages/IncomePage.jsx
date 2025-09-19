@@ -57,7 +57,7 @@ export const IncomePage = () => {
   };
   useEffect(() => {
     withLoading(async () => {
-      fetchIncome();
+      await fetchIncome();
     });
   }, []);
 
