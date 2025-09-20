@@ -55,14 +55,19 @@ const Header = () => {
   return (
     <header className="w-full bg-white shadow-lg px-4 py-2 relative">
       <div className="flex items-center justify-between">
-        {/* Logo */}
-        <div className="logo-container">
+        {/* Logo & Name*/}
+        <div
+          className="logo-container flex items-center gap-3 cursor-pointer transition duration-200 hover:opacity-80"
+          onClick={() => navigate("/")}
+        >
           <img
-            className="w-16 h-16 cursor-pointer"
+            className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-lg"
             src={LOGO_URL}
             alt="Logo"
-            onClick={() => navigate("/")}
           />
+          <p className="text-3xl font-extrabold text-gray-900 tracking-tight hover:text-blue-600 transition duration-300 animate-bounce">
+            Finly
+          </p>
         </div>
 
         <nav className="hidden md:flex items-center gap-8 font-medium text-gray-700">
@@ -119,10 +124,11 @@ const Header = () => {
             <ProfileMenu user={user} onLogout={handleLogOut} />
           ) : (
             <span
-              className="cursor-pointer text-blue-600 hover:underline"
+              className="cursor-pointer text-blue-600 font-semibold relative group"
               onClick={() => navigate("/login")}
             >
               Register
+              <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-blue-600 transition-all group-hover:w-full"></span>
             </span>
           )}
         </div>
