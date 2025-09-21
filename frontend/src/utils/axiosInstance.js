@@ -56,15 +56,16 @@ axiosInstance.interceptors.response.use(
     }
 
     if (error.response) {
-      if (error.response.status === 401) {
+      if (error.response.status === 401 && originalRequest._retry) {
+        // only redirect after refresh attempt failed
+        localStorage.removeItem("access_token");
         window.location.href = "/login";
       } else if (error.response.status === 500) {
         console.error("Server error. Please try again later");
+      } else if(error.code==="ECONNABORTED"){
+        console.error("Request timed out. Please try again.");
       }
-    } else if (error.code === "ECONNABORTED") {
-      console.error("Request timed out. Please try again.");
     }
-
     return Promise.reject(error);
   }
 );
