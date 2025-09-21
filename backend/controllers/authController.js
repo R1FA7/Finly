@@ -206,7 +206,7 @@ export async function sendVerifyOtp(req, res) {
     }
 
     if (user.isAccountVerified) {
-      return res.json({ success: false, message: "Account already verified" });
+      return res.status(409).json({ success: false, message: "Account already verified" });//conflict
     }
 
     const otp = String(Math.floor(100000 + Math.random() * 900000));
@@ -223,9 +223,9 @@ export async function sendVerifyOtp(req, res) {
     };
     await transporter.sendMail(mailOptions);
 
-    return res.json({ success: true, message: "OTP sent to mail", data:otp });
+    return res.status(200).json({ success: true, message: "OTP sent to mail", data:otp });
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 }
 
@@ -235,22 +235,22 @@ export async function verifyEmail(req, res) {
     const { otp } = req.body;
 
     if (!otp) {
-      return res.json({ success: false, message: 'Missing OTP' });
+      return res.status(400).json({ success: false, message: 'Missing OTP' }); // Bad Request
     }
 
     const userId = req.user.id; // get from middleware
     const user = await userModel.findById(userId);
 
     if (!user) {
-      return res.json({ success: false, message: 'User not found' });
+      return res.status(404).json({ success: false, message: 'User not found' }); // Not Found
     }
 
     if (user.verifyOtp === '' || user.verifyOtp !== otp) {
-      return res.json({ success: false, message: 'Invalid OTP' });
+      return res.status(400).json({ success: false, message: 'Invalid OTP' }); // Bad Request
     }
 
     if (user.verifyOtpExpireAt < Date.now()) {
-      return res.json({ success: false, message: 'OTP expired' });
+      return res.status(400).json({ success: false, message: 'OTP expired' }); // Bad Request
     }
 
     user.isAccountVerified = true;
@@ -259,31 +259,35 @@ export async function verifyEmail(req, res) {
 
     await user.save();
 
-    return res.json({ success: true, message: 'Email verified successfully' });
+    return res.status(200).json({ success: true, message: 'Email verified successfully' }); // OK
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message }); // Internal Server Error
   }
 }
 
 
-export async function isAuthenticated(req,res){
+export async function isAuthenticated(req, res) {
   try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ success: false, message: "Not authenticated" });
+    }
 
-    return res.json({success:true})
+    return res.json({ success: true });
   } catch (error) {
-    return res.json({success:false, message:error.message})
+    return res.status(500).json({ success: false, message: error.message });
   }
 }
+
 
 export async function sendResetOtp(req,res){
   const {email} = req.body
   if(!email){
-    return res.json({success:false, message:'Email is required'})
+    return res.status(400).json({success:false, message:'Email is required'})
   }
   try {
     const user = await userModel.findOne({email})
     if(!user){
-      return res.json({success:false, message:"User not found with this email"})
+      return res.status(404).json({success:false, message:"User not found with this email"})
     }
 
     const newOtp = String(Math.floor(100000+Math.random()*900000))
@@ -314,10 +318,10 @@ export async function sendResetOtp(req,res){
 
     await transporter.sendMail(mailOptions)
 
-    return res.json({success:true, message:" Reset password otp sent to email", data: newOtp})
+    return res.status(200).json({success:true, message:" Reset password otp sent to email", data: newOtp})
 
   } catch (error) {
-    return res.json({success:false, message:error.message})
+    return res.status(500).json({success:false, message:error.message})
   }
 }
 
