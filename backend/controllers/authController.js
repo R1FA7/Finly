@@ -92,7 +92,7 @@ export async function login(req,res){
     const isMatch = await bcrypt.compare(password,user.password)
 
     if(!isMatch){
-        return res.status(401).json({
+        return res.status(400).json({
         success:false,
         message:'Incorrect password'
       })
@@ -152,7 +152,7 @@ export async function renewAccessToken(req,res){
     console.log(error)
     return res.status(401).json({
       success: false,
-      message: error.message
+      message: error.message,
     })
   }
 }
@@ -321,7 +321,7 @@ export async function verifyResetOtp(req, res) {
   }
 
   if (user.resetOtp !== otp) {
-    return res.status(401).json({ success: false, message: 'Invalid OTP' });
+    return res.status(400).json({ success: false, message: 'Invalid OTP' });
   }
 
   if (user.resetOtpExpireAt < Date.now()) {
@@ -360,7 +360,7 @@ export async function updateProfile(req,res){
   try{
     const userId = req.user?.id 
     const {name, email, password} = req.body 
-    if(!userId) return res.status(401).json({
+    if(!userId) return res.status(403).json({
       success : false, 
       message: "Unauthorized"
     })
