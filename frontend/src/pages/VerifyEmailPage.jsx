@@ -3,16 +3,21 @@ import {
   EnvelopeIcon,
   PaperClipIcon,
 } from "@heroicons/react/24/outline";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { AppContext } from "../context/AppContext";
 import { API_PATHS } from "../utils/apiPaths";
 import axiosInstance from "../utils/axiosInstance";
+
 export const VerifyEmailPage = () => {
-  const { user } = useContext(AppContext);
+  const { user, getUserData } = useContext(AppContext);
   const [otp, setOtp] = useState("");
   const [status, setStatus] = useState("idle");
   const [isVerified, setIsVerified] = useState(user.isAccountVerified);
+
+  useEffect(() => {
+    setIsVerified(user.isAccountVerified);
+  }, [user.isAccountVerified]);
 
   const sendOtp = async () => {
     try {
@@ -45,6 +50,7 @@ export const VerifyEmailPage = () => {
         otp,
       });
       setStatus("success");
+      await getUserData();
       setIsVerified(true);
       toast.success(res.data.message || "Email verified successfully.");
     } catch (error) {
