@@ -68,20 +68,6 @@ Finly is a full-stack MERN (MongoDB, Express.js, React, Node.js) application for
   - Download transaction details as Excel (.xlsx) files for offline analysis
 ---
 
-## 📁 Folder Structure (Simplified)
-
-```
-/client         → React frontend  
-/server         → Express backend  
-├── controllers  
-├── routes  
-├── models  
-├── middleware  
-├── utils  
-```
-
----
-
 ## 🧪 Run Locally
 
 ### 1. Clone the repo
