@@ -23,6 +23,7 @@ axiosInstance.interceptors.request.use(
 )
 
 //Resonpose Interceptor : catch 401 and renew/ refresh access token
+
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
@@ -30,6 +31,10 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    if (error.response?.status === 401 && originalRequest.url.includes('/refresh-token')) {
+      window.location.href = '/login';
+      return Promise.reject(error);
+    }
     if (error.response?.status === 401 && !originalRequest._retry) { // first time 401 error
       originalRequest._retry = true;
       try {
