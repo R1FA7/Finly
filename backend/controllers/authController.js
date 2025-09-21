@@ -42,8 +42,10 @@ export async function register(req,res){
       refresh_token,
       {
         httpOnly: true,
-        secure : process.env.NODE_ENV==='production',
-        sameSite: 'strict',
+        //secure : process.env.NODE_ENV==='production',
+        //sameSite: 'strict',
+        secure: true,
+        sameSite: 'none',
         maxAge : 7 * 24 * 60 * 60 * 1000
       }
     )
@@ -111,8 +113,10 @@ export async function login(req,res){
 
     res.cookie('refreshToken', refresh_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      //secure: process.env.NODE_ENV === 'production',
+      //sameSite: 'strict',
+      secure: true,
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -130,32 +134,50 @@ export async function login(req,res){
   }
 }
 //after 15m access token expiration it will auto create another access token
+// export async function renewAccessToken(req,res){
+//   try {
+//     const userId = req.user?.id 
+//     if(!userId) {
+//       return res.status(401).json({
+//         success: false,
+//         message: "Not Authorized"
+//       })
+//     }
+//     const access_token = jwt.sign(
+//       {id: userId},
+//       process.env.JWT_SECRET,
+//       {expiresIn: '15m'}
+//     )
+//     res.json({
+//       success: true,
+//       access_token
+//     })
+//   } catch (error) {
+//     console.log(error)
+//     return res.status(401).json({
+//       success: false,
+//       message: error.message,
+//     })
+//   }
+// }
 export async function renewAccessToken(req,res){
   try {
-    const userId = req.user?.id 
-    if(!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "Not Authorized"
-      })
-    }
+    const { refreshToken } = req.cookies;
+    if (!refreshToken) return res.status(401).json({ success:false, message:"No refresh token" });
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
     const access_token = jwt.sign(
-      {id: userId},
+      {id: decoded.id},
       process.env.JWT_SECRET,
-      {expiresIn: '15m'}
-    )
-    res.json({
-      success: true,
-      access_token
-    })
+      {expiresIn:'15m'}
+    );
+
+    res.json({success:true, access_token});
   } catch (error) {
-    console.log(error)
-    return res.status(401).json({
-      success: false,
-      message: error.message,
-    })
+    return res.status(401).json({success:false, message:error.message});
   }
 }
+
 //we need this bcoz reacts context api's user will be gone after refreshing page
 export const getUserInfo = async (req, res) => {
   try {
@@ -389,11 +411,11 @@ export async function updateProfile(req,res){
     user.name = name || user.name
     user.email = email || user.email 
 
-    if(password && password.trim()!="") user.password = await bcrypt.hash(password,10) 
+    if(password && password.trim()!=="") user.password = await bcrypt.hash(password,10) 
 
     await user.save() 
 
-    res.json({
+    res.status(200).json({
       success: true,
       message:"Profile updated successfully",
       data: user,
