@@ -49,10 +49,10 @@ export async function register(req,res){
     )
     try {
       const mailOptions = {
-        from : process.env.SENDER_EMAIL,
+        from : process.env.GMAIL_USER,
         to : email,
-        subject : 'Welcome to Arena.',
-        text : `Welcome to this arena. Your account has been created with email id: ${email}`
+        subject : 'Welcome to Finly.',
+        text : `Welcome to the Finly. Your account has been created with email id: ${email}`
       }
 
       await transporter.sendMail(mailOptions)
@@ -216,7 +216,7 @@ export async function sendVerifyOtp(req, res) {
     await user.save();
 
     const mailOptions = {
-      from: process.env.SENDER_EMAIL,
+      from: process.env.GMAIL_USER,
       to: user.email,
       subject: "Account Verification OTP.",
       text: `Your OTP to verify your account is ${otp}`
@@ -294,11 +294,24 @@ export async function sendResetOtp(req,res){
     await user.save()
 
     const mailOptions = {
-      from : process.env.SENDER_EMAIL,
-      to : user.email,
-      subject : 'Password Reset OTP.',
-      text : `Your OTP to reset your password is ${newOtp}`
-    }
+      from: process.env.GMAIL_USER,
+      to: user.email,
+      subject: "Reset Your Password - OTP Code",
+      text: `
+    Hi ${user.name || ''},
+
+    We received a request to reset your password. Use the OTP below to proceed:
+
+    OTP: ${newOtp}
+
+    If you did not request this, you can ignore this email.
+
+    Thanks,  
+    Your App Team
+    Finly
+      `,
+    };
+
     await transporter.sendMail(mailOptions)
 
     return res.json({success:true, message:" Reset password otp sent to email", data: newOtp})
