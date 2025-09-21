@@ -12,8 +12,9 @@ connectDB()
 const app = express()
 const port = process.env.PORT || 3000
 const allowedOrigins =[
-  'http://localhost:5173',
-  "https://finly-production-79f0.up.railway.app",
+  // 'http://localhost:5173',
+  // "https://finly-production-79f0.up.railway.app",
+  process.env.VITE_FRONTEND_URL
 ]
 
 app.use(express.json())
