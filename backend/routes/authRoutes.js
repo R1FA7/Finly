@@ -1,12 +1,13 @@
 import express from "express";
 import { getUserInfo, isAuthenticated, login, logout, register, renewAccessToken, resetPassword, sendResetOtp, sendVerifyOtp, updateProfile, verifyEmail, verifyResetOtp } from "../controllers/authController.js";
+import refreshAuth from "../middleware/refreshAuth.js";
 import userAuth from "../middleware/userAuth.js";
 
 const authRouter = express.Router()
 
 authRouter.post('/register',register);
 authRouter.post('/login',login);
-authRouter.post('/refresh-token',userAuth, renewAccessToken)
+authRouter.post('/refresh-token',refreshAuth, renewAccessToken)
 authRouter.get('/getUserInfo',userAuth, getUserInfo)
 authRouter.patch('/update-profile',userAuth, updateProfile)
 authRouter.post('/logout',logout);
