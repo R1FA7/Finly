@@ -229,14 +229,26 @@ export const getDashboardData = async (req, res) => {
                 currentAmount: incomeGoalCurData.total,
                 remaining: incomeGoal.amount - incomeGoalCurData.total
               }
-            : null,
+            : {
+                amount: 0,
+                currentAmount: 0,
+                remaining: 0,
+                startDate: null,
+                endDate: null,
+              },
           expense: expenseGoal
             ? {
                 ...expenseGoal,
                 currentAmount: expenseGoalCurData.total,
                 remaining: expenseGoal.amount - expenseGoalCurData.total
               }
-            : null
+            : {
+                amount: 0,
+                currentAmount: 0,
+                remaining: 0,
+                startDate: null,
+                endDate: null,
+              }
         },
         incomeVsExpense: {
           weekly: {

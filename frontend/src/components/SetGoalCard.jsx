@@ -85,8 +85,8 @@ export const SetGoalCard = ({ data, type, onSubmitGoal }) => {
           <div className="relative">
             <DonutChart
               type={type}
-              goalAmount={goalAmount}
-              currentAmount={currentAmount}
+              goalAmount={goalAmount || 0}
+              currentAmount={currentAmount || 0}
             />
             {remaining < 0 ? (
               <p
@@ -96,10 +96,14 @@ export const SetGoalCard = ({ data, type, onSubmitGoal }) => {
               >
                 Exceeded
               </p>
-            ) : (
+            ) : goalAmount > 0 ? (
               <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-gray-700 text-center">
                 Reached <br />
                 {((currentAmount * 100) / goalAmount).toFixed(2)}%
+              </p>
+            ) : (
+              <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium text-center">
+                No goal set
               </p>
             )}
           </div>
