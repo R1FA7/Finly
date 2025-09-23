@@ -61,23 +61,26 @@ export const VerifyEmailPage = () => {
 
   if (isVerified) {
     return (
-      <div className="relative w-full max-w-md mx-auto mt-16">
-        {/* Paper clips on top corners */}
-        <PaperClipIcon className="w-8 h-8 text-gray-400 absolute -top-2 -left-4 -rotate-10 z-20" />
-        <PaperClipIcon className="w-8 h-8 text-gray-400 absolute -top-7 -right-4 -rotate-12 z-20" />
+      <div className="relative w-full mt-16 px-4">
+        {/* Rotated container (wraps clips + note) */}
+        <div className="relative transform -rotate-3 max-w-md mx-auto">
+          {/* Paper clips on top corners */}
+          <PaperClipIcon className="w-8 h-8 text-gray-400 absolute -top-2 -left-4 -rotate-10 z-20" />
+          <PaperClipIcon className="w-8 h-8 text-gray-400 absolute -top-3 -right-4 -rotate-12 z-20" />
 
-        {/* Rotated paper note */}
-        <div className="bg-white border border-gray-300 rounded-lg shadow-lg px-6 py-8 transform -rotate-3 relative z-10">
-          <div className="flex flex-col items-center text-center">
-            <CheckBadgeIcon className="w-16 h-16 text-green-500 mb-4" />
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              Email Verified
-            </h2>
-            <p className="text-gray-600">
-              Your email{" "}
-              <span className="text-cyan-700 font-medium">{user.email}</span> is
-              verified.
-            </p>
+          {/* Paper note */}
+          <div className="bg-white border border-gray-300 rounded-lg shadow-lg px-6 py-8 relative z-10">
+            <div className="flex flex-col items-center text-center">
+              <CheckBadgeIcon className="w-16 h-16 text-green-500 mb-4" />
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                Email Verified
+              </h2>
+              <p className="text-gray-600">
+                Your email{" "}
+                <span className="text-cyan-700 font-medium">{user.email}</span>{" "}
+                is verified.
+              </p>
+            </div>
           </div>
         </div>
       </div>

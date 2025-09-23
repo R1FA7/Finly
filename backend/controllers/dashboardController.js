@@ -1,6 +1,6 @@
 import mongoose, { isValidObjectId } from "mongoose";
+import goalModel from "../models/goalModel.js";
 import transactionModel from "../models/transactionModel.js";
-//req. query, params, body
 
 //Dashboard->TB,TI,TE,Recent txns, Only Exp, Last months exp, income last 30days , (+search bar, +breakdown bar)
 //Income -> last 7 days income bar, income source, add income(new one will be added in bar), download,
@@ -20,9 +20,6 @@ const getFullBreakDown = async (userId, unit) =>{
   const breakdown = {}
 
   const today = new Date()
-  console.log("Date",today);
-  //today.setHours(0, 0, 0, 0)
-  console.log("after",today)
   if(unit==="week"){//last 7days 
     const last7DaysTxns = []
     for(let i=0;i<7;i++){
@@ -86,13 +83,18 @@ const getFullBreakDown = async (userId, unit) =>{
 }
 
 // get total income or expense from startDate(TI,TE,TB,income/exp in last x days)
-const getTotalAmounts = async (userId, type, startDate=null, endDate=null)=>{
-  const match={
+const getTotalAmounts = async (userId, type, startDate=null, endDate=null, dataFor=null)=>{
+  const match = {
     userId: new mongoose.Types.ObjectId(userId),
     type,
-    ...(startDate && {date : {$gte: startDate}}),
-    ...(endDate && {date: {$lte: endDate}})
-  }
+    ...(startDate || endDate ? {
+      date: {
+        ...(startDate && { $gte: startDate }),
+        ...(endDate && { $lte: endDate }),
+      }
+    } : {})
+  };
+
 
   const result = await transactionModel.aggregate([
     {$match: match},
@@ -100,6 +102,8 @@ const getTotalAmounts = async (userId, type, startDate=null, endDate=null)=>{
   ])
 
   const total =  result[0]?.total || 0;
+
+  if(startDate && endDate && dataFor==="goal") return {total}
   let txns = []
   if(startDate && endDate){
     txns = await transactionModel.find(match).sort({date:-1})
@@ -115,47 +119,6 @@ const getTotalAmounts = async (userId, type, startDate=null, endDate=null)=>{
   }
 }
 
-// export const getDashboardRangeQueryData =  async(req,res)=>{
-//   try{
-//     const userId = req.user?.id
-//     const {startRDate, endRDate} = req.query
-//     if(startRDate || !endRDate){
-//       return res.status(400).json({
-//         success: false,
-//         message: "Date range required"
-//       })
-//     }
-//     //Total income & expnse within this date range(another feature)
-//     const {total: totalIncomeinRange} = await getTotalAmounts(
-//       userId,
-//       "income",
-//       startRDate,
-//       endRDate
-//     )
-//     const {total: totalExpenseinRange} = await getTotalAmounts(
-//       userId,
-//       "expense",
-//       startRDate,
-//       endRDate 
-//     )
-//     res.status(200).json({
-//       success: true,
-//       message: "Range data fetched successfully",
-//       data:{
-//         totalIncomeinRange,
-//         totalExpenseinRange,
-//       }
-//     })
-//   } catch(error){
-//     console.error("Dashboard error:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Server Error",
-//       errors: error.message,
-//     });
-//   }
-// }
-
 const parseDate = (dateStr) =>{
   const d = new Date(dateStr)
   return isNaN(d.getTime()) ? null : d;
@@ -170,7 +133,6 @@ export const getDashboardData = async (req, res) => {
         message: "Invalid User ID",
       });
     }
-    
 
     const {search="", type, source, minAmount, maxAmount, startDate, endDate} = req.query
 
@@ -235,6 +197,22 @@ export const getDashboardData = async (req, res) => {
     const incomeSources = await transactionModel.distinct("source",{type:"income"})
     const expenseSources = await transactionModel.distinct("source",{type:"expense"})
 
+    //Goals
+    //latest goal (income & expense)
+    const [incomeGoal, expenseGoal] = await Promise.all([
+      goalModel.findOne({userId, type:"income"}).sort({createdAt:-1}).lean(),
+      goalModel.findOne({userId, type:"expense"}).sort({createdAt: -1}).lean()
+    ])
+
+    const [incomeGoalCurData, expenseGoalCurData] = await Promise.all([
+      incomeGoal 
+      ? getTotalAmounts(userId, "income", incomeGoal.startDate, incomeGoal.endDate,"goal")
+      : {total : 0},
+      expenseGoal
+      ? getTotalAmounts(userId, "expense", expenseGoal.startDate, expenseGoal.endDate,"goal")
+      : {total : 0}
+    ])
+
     res.status(200).json({
       success: true,
       message: "Dashboard Data fetched successfully",
@@ -244,6 +222,22 @@ export const getDashboardData = async (req, res) => {
         totalExpense,
         incomeSources,
         expenseSources,
+        goals:{
+          income: incomeGoal 
+            ? {
+                ...incomeGoal,
+                currentAmount: incomeGoalCurData.total,
+                remaining: incomeGoal.amount - incomeGoalCurData.total
+              }
+            : null,
+          expense: expenseGoal
+            ? {
+                ...expenseGoal,
+                currentAmount: expenseGoalCurData.total,
+                remaining: expenseGoal.amount - expenseGoalCurData.total
+              }
+            : null
+        },
         incomeVsExpense: {
           weekly: {
             income: lastWeeksIncome,
@@ -257,9 +251,9 @@ export const getDashboardData = async (req, res) => {
         recentTransactions: last10Txns,
         searchFilteredTxns,
         breakdowns: {
-          yearly: yearlyBreakdown,   // For charting per year
-          monthly: monthlyBreakdown, // For charting per month
-          weekly: weeklyBreakdown,   // For charting per week
+          yearly: yearlyBreakdown,
+          monthly: monthlyBreakdown, 
+          weekly: weeklyBreakdown, 
         },
       },
     });

@@ -10,6 +10,7 @@ import { Button } from "../components/Button";
 import { LineBreakDownChart } from "../components/charts/LineBreakDownChart";
 import { DashboardToolBar } from "../components/DashboardToolBar";
 import { LoadingSpinner } from "../components/loaders/LoadingSpinner";
+import { SetGoalCard } from "../components/SetGoalCard";
 import { SummaryCard } from "../components/SummaryCard";
 import { TransactionForm } from "../components/TransactionForm";
 import { TransactionList } from "../components/TransactionList";
@@ -29,8 +30,9 @@ export const DashboardPage = () => {
   const fetchDashboardStats = async () => {
     try {
       const res = await axiosInstance.get(API_PATHS.DASHBOARD.GET_DATA);
-      console.log("Fetched dashboard data:", res.data.data);
+      console.log("Fetched dashboard data:", res?.data?.data);
       setDashboardStats(res?.data?.data);
+      return res?.data?.data;
     } catch (err) {
       console.error("Failed to fetch dashboard stats", err);
     }
@@ -132,6 +134,30 @@ export const DashboardPage = () => {
     fetchFilteredTxns({ search, ...newFilters });
   };
 
+  const handleSaveGoal = async (goal) => {
+    try {
+      const res = await axiosInstance.post(API_PATHS.GOAL.CU_GOAL, goal);
+      if (res?.data?.success) {
+        console.log("Goal saved", res?.data?.data);
+        //can't depend on dashboardStats as async so needed to do updatedStats var
+        const updatedStats = await fetchDashboardStats();
+        const incomeRemaining = updatedStats?.goals?.income?.remaining;
+        const expenseRemaining = updatedStats?.goals?.expense?.remaining;
+        toast.success(res?.data?.message);
+        //If again updated goal && still exceedeed show again
+        if (incomeRemaining < 0) {
+          localStorage.setItem("dismissed-income-notification", "false");
+        }
+        if (expenseRemaining < 0) {
+          localStorage.setItem("dismissed-expense-notification", "false");
+        }
+      } else {
+        toast.error(res?.data?.message);
+      }
+    } catch (error) {
+      console.error("Error saving goal", error.message);
+    }
+  };
   // const sourceWiseIncome = useMemo(() => {
   //   const res = incomeData.reduce((acc, { source, amount }) => {
   //     acc[source] = (acc[source] || 0) + amount;
@@ -170,25 +196,24 @@ export const DashboardPage = () => {
           Add Transaction
         </Button>
         <div className="flex flex-col md:flex-row justify-center items-center md:items-center gap-6 mb-6">
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex justify-center gap-2 flex-wrap">
             <SummaryCard
               icon={<ScaleIcon />}
               title="Total Balance"
               value={dashboardStats?.totalBalance}
-              className="bg-slate-50 border border-slate-200 text-slate-800 w-[180px]"
+              className="bg-slate-50 border border-slate-200 text-slate-800 w-[175px]"
             />
-
             <SummaryCard
               icon={<ArrowTrendingUpIcon />}
               title="Total Income"
               value={dashboardStats?.totalIncome}
-              className="bg-green-50 border border-green-200 text-green-600 w-[180px]"
+              className="bg-green-50 border border-green-200 text-green-600 w-[175px]"
             />
             <SummaryCard
               icon={<ArrowTrendingDownIcon />}
               title="Total Expense"
               value={dashboardStats?.totalExpense}
-              className="bg-red-50 border border-red-200 text-red-600 w-[180px]"
+              className="bg-red-50 border border-red-200 text-red-600 w-[175px]"
             />
             <SummaryCard
               icon={<ArrowTrendingUpIcon />}
@@ -196,7 +221,7 @@ export const DashboardPage = () => {
               value={
                 dashboardStats?.incomeVsExpense?.weekly?.income?.total || 0
               }
-              className="bg-green-50 border border-green-200 text-green-600 w-[180px]"
+              className="bg-green-50 border border-green-200 text-green-600 w-[175px]"
             />
             <SummaryCard
               icon={<ArrowTrendingDownIcon />}
@@ -204,7 +229,7 @@ export const DashboardPage = () => {
               value={
                 dashboardStats?.incomeVsExpense?.weekly?.expense?.total || 0
               }
-              className="bg-red-50 border border-red-200 text-red-600 w-[180px]"
+              className="bg-red-50 border border-red-200 text-red-600 w-[175px]"
             />
             {/* <SummaryCard
               icon={<ArrowTrendingUpIcon />}
@@ -233,6 +258,43 @@ export const DashboardPage = () => {
           loading={btnLoadingMap.submitTxns}
         />
       )}
+      <div className="bg-white rounded-lg shadow-md p-6 mx-2 mb-4 mt-8 border border-gray-200">
+        {/* Title and Description */}
+        <div className="mb-6 text-center">
+          <p className="text-lg font-semibold text-slate-800">Set Your Goal</p>
+          <p className="mt-3 text-gray-600 text-sm max-w-md mx-auto">
+            Define your savings target and track your progress effectively.
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="w-full sm:w-1/2">
+            <SetGoalCard
+              data={
+                dashboardStats?.goals?.expense || {
+                  goalAmount: 0,
+                  currentAmount: 0,
+                }
+              }
+              type={"expense"}
+              onSubmitGoal={(goal) => handleSaveGoal(goal)}
+            />
+          </div>
+          <div className="w-full sm:w-1/2">
+            <SetGoalCard
+              data={
+                dashboardStats?.goals?.income || {
+                  goalAmount: 0,
+                  currentAmount: 0,
+                }
+              }
+              type={"income"}
+              onSubmitGoal={(goal) => handleSaveGoal(goal)}
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="bg-white rounded-lg shadow-md p-4 mx-1.5 mb-1.5 mt-8 border border-gray-200">
         <DashboardToolBar
           onSearch={(query) => handleSearch(query)}

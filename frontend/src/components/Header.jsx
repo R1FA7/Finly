@@ -16,11 +16,14 @@ const Header = () => {
   const handleLogOut = async () => {
     try {
       await axiosInstance.post(API_PATHS.AUTH.LOGOUT);
+      localStorage.removeItem("dismissed-income-notification");
+      localStorage.removeItem("dismissed-expense-notification");
       localStorage.removeItem("access_token");
       setIsLoggedIn(false);
       updateUser(null);
       toast.success("Logged out Successfully");
       navigate("/");
+      //window.location.href = "/";
     } catch (error) {
       console.error("Logout failed", error);
       toast.error("Logout failed");

@@ -187,14 +187,14 @@ export const IncomePage = () => {
               icon={<ArrowTrendingUpIcon />}
               title="Total Income"
               value={totalIncome}
-              className="bg-green-50 border border-green-200 text-green-600 w-[200px]"
+              className="bg-green-50 border border-green-200 text-green-600 w-[170px]"
             />
 
             <SummaryCard
               icon={<TrophyIcon />}
-              title="Highest Income"
+              title="Max Income"
               value={maxIncome}
-              className="bg-green-100 border border-green-300 text-green-700 w-[200px]"
+              className="bg-green-100 border border-green-300 text-green-700 w-[170px]"
             />
           </div>
         </div>

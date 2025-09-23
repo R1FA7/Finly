@@ -5,6 +5,7 @@ import express from "express"
 import connectDB from "./config/mongodb.js"
 import authRouter from "./routes/authRoutes.js"
 import dashboardRouter from "./routes/dashboardRoutes.js"
+import goalRouter from "./routes/goalRoutes.js"
 import transactionRouter from "./routes/transactionRoutes.js"
 
 connectDB() 
@@ -28,7 +29,7 @@ app.get('/',(req,res)=>{
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/transaction', transactionRouter)
 app.use('/api/v1/dashboard', dashboardRouter)
-
+app.use('/api/v1/goal', goalRouter)
 
 app.listen(port, ()=>{
   console.log(`server started in Port ${port}`)

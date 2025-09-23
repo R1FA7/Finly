@@ -190,14 +190,14 @@ export const ExpensePage = () => {
               icon={<ArrowTrendingDownIcon />}
               title="Total Expense"
               value={totalExpense}
-              className="bg-red-50 border border-red-200 text-red-600 w-[200px]"
+              className="bg-red-50 border border-red-200 text-red-600 w-[170px]"
             />
 
             <SummaryCard
               icon={<ShieldExclamationIcon />}
-              title="Highest Expense"
+              title="Max Expense"
               value={maxExpense}
-              className="bg-red-100 border border-red-300 text-red-700 w-[200px]"
+              className="bg-red-100 border border-red-300 text-red-700 w-[170px]"
             />
           </div>
         </div>

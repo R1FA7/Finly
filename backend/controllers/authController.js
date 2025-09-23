@@ -97,7 +97,7 @@ export async function login(req,res){
     const access_token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: '15m' }
+      { expiresIn: '1m' }
     );
 
     const refresh_token = jwt.sign(
@@ -156,12 +156,9 @@ export async function login(req,res){
 // }
 export async function renewAccessToken(req,res){
   try {
-    const { refreshToken } = req.cookies;
-    if (!refreshToken) return res.status(401).json({ success:false, message:"No refresh token" });
-
-    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    console.log(req?.user?.id)
     const access_token = jwt.sign(
-      {id: decoded.id},
+      {id: req?.user?.id},
       process.env.JWT_SECRET,
       {expiresIn:'15m'}
     );

@@ -17,6 +17,9 @@ export const API_PATHS = {
   DASHBOARD:{
     GET_DATA: `${BASE_API}/dashboard`,
   },
+  GOAL:{
+    CU_GOAL : `${BASE_API}/goal`
+  },
   TRANSACTION:{
     GET_ALL: (type)=>`${BASE_API}/transaction?type=${type}`,
 
