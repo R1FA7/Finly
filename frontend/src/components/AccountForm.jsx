@@ -23,7 +23,7 @@ export const AccountForm = ({ user, onEdit }) => {
     onEdit(info);
   };
   return (
-    <div className="w-full border rounded-md p-6 bg-white shadow-sm relative">
+    <div className="w-full border border-gray-200 rounded-md p-6 bg-white shadow-sm relative dark:bg-gray-900">
       <p className="text-blue-800 font-semibold text-lg mb-6 border-b pb-2">
         Account Details
       </p>
@@ -42,7 +42,8 @@ export const AccountForm = ({ user, onEdit }) => {
             name="name"
             value={info.name}
             onChange={handleChange}
-            className="w-full p-3 pt-5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-600"
+            className="w-full p-3 pt-5 border border-gray-300 rounded-md 
+            dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-600"
           />
         </div>
 
@@ -60,7 +61,8 @@ export const AccountForm = ({ user, onEdit }) => {
             name="email"
             value={info.email}
             onChange={handleChange}
-            className="w-full p-3 pt-5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-600"
+            className="w-full p-3 pt-5 border border-gray-300 rounded-md 
+            dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-600"
           />
         </div>
 
@@ -75,12 +77,13 @@ export const AccountForm = ({ user, onEdit }) => {
           <input
             id="password"
             type={showPassword ? "text" : "password"}
-            placeholder="Must be at least 6 characters long"
+            placeholder="At least 6 characters long"
             name="password"
             value={info.password}
             onChange={handleChange}
             className="w-full p-3 pt-5 border border-gray-300 
-            rounded-md focus:outline-none focus:ring-2 focus:ring-teal-600"
+            rounded-md 
+            dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-600"
           />
           <button
             type="button"
@@ -88,9 +91,9 @@ export const AccountForm = ({ user, onEdit }) => {
             className="absolute right-5 bottom-2"
           >
             {showPassword ? (
-              <EyeIcon className="w-5 h-5 text-gray-600" />
+              <EyeIcon className="w-5 h-5 text-gray-600 dark:text-gray-100" />
             ) : (
-              <EyeSlashIcon className="w-5 h-5 text-gray-600" />
+              <EyeSlashIcon className="w-5 h-5 text-gray-600 dark:text-gray-100" />
             )}
           </button>
         </div>

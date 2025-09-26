@@ -66,7 +66,7 @@ const BarBreakdownChartComponent = ({
         {" "}
         {styleText(frequency)} {styleText(type)} Trend{" "}
       </h2>
-      <p className="text-sm text-gray-500 text-center mb-4">
+      <p className="text-sm text-gray-500 text-center mb-4 dark:text-gray-400">
         Breakdown of {type} over the {getFrequencyDescription()}
       </p>
 

@@ -62,7 +62,7 @@ export const ProfileMenu = ({ user, onLogout }) => {
       {isOpen && (
         <div
           ref={menuRef}
-          className="absolute right-5 mt-2 w-60 bg-green-50 shadow-xl rounded-lg z-50 py-4 px-4"
+          className="absolute right-5 mt-2 w-60 bg-green-50 dark:bg-green-200 shadow-xl rounded-lg z-50 py-4 px-4"
         >
           {/* User Info + Update Profile Link */}
           <div className="flex items-center gap-3 mb-3">

@@ -101,11 +101,13 @@ export const ResetPasswordPage = () => {
   };
 
   return (
-    <div className="py-10 px-4">
-      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-3">
+    <div className="py-10 px-4 dark:bg-gray-900">
+      <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 shadow-md rounded-lg p-3">
         <div className="flex items-center gap-3 justify-center mb-6">
           <ArrowPathIcon className="w-8 h-8 text-teal-600" />
-          <p className="text-2xl font-semibold text-gray-800">Reset Password</p>
+          <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+            Reset Password
+          </p>
         </div>
         <div className="flex flex-row gap-8">
           {/* Vertical Steps */}
@@ -126,7 +128,8 @@ export const ResetPasswordPage = () => {
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-600 focus:ring-2"
+                className="w-full p-3 border border-gray-300 rounded-md 
+                dark:text-gray-200 focus:outline-none focus:ring-teal-600 focus:ring-2"
                 required
                 disabled={step > 1}
               />

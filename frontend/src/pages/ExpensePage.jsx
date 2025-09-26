@@ -182,8 +182,8 @@ export const ExpensePage = () => {
   }
 
   return (
-    <div>
-      <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200">
+    <div className="dark:bg-gray-900 dark:text-gray-100">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-4 m-1.5 border border-gray-200">
         <div className="flex flex-col md:flex-row justify-center items-center md:items-center gap-6 mb-6">
           <div className="flex flex-wrap justify-center gap-6">
             <SummaryCard
@@ -254,9 +254,12 @@ export const ExpensePage = () => {
           </div>
         )}
       </div>
-      <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-4 m-1.5 border border-gray-200">
         {searchActive && filteredExpense.length === 0 ? (
-          <div className="text-center text-gray-500 py-8"> Not found. </div>
+          <div className="text-center text-gray-500 py-8 dark:text-gray-400">
+            {" "}
+            Not found.{" "}
+          </div>
         ) : (
           <TransactionList
             type={"expense"}
@@ -267,7 +270,7 @@ export const ExpensePage = () => {
           />
         )}
       </div>
-      <div className="bg-white rounded-lg shadow-lg p-4 m-1.5 border border-gray-200 relative">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-4 m-1.5 border border-gray-200 relative">
         <select
           className="border-gray-900 absolute right-3 top-3 p-2 drop-shadow-emerald-900 rounded-lg font-semibold"
           value={selectedFrequency}
@@ -287,7 +290,7 @@ export const ExpensePage = () => {
           barColors={"#0ea5e9"}
         />
       </div>
-      <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-4 m-1.5 border border-gray-200">
         <HorizontalBarBreakdown data={sourceWiseExpense} type="expense" />
       </div>
     </div>

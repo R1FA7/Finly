@@ -8,6 +8,22 @@ export const AppContextProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("theme") || "light";
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (theme === "dark") root.classList.add("dark");
+    else root.classList.remove("dark");
+
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  };
   //will be gone if user refreshes the page
   //so need consistent  user data as long as token present. So need an api call
   const updateUser = (userData) => {
@@ -51,6 +67,8 @@ export const AppContextProvider = (props) => {
     updateUser,
     getUserData,
     loading,
+    theme,
+    toggleTheme,
   };
   return (
     <AppContext.Provider value={value}>

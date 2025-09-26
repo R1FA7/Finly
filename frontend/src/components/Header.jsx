@@ -1,3 +1,4 @@
+import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { useContext, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -8,7 +9,7 @@ import { LOGO_URL } from "../utils/constants";
 import { ProfileMenu } from "./ProfileMenu";
 
 const Header = () => {
-  const { isLoggedIn, setIsLoggedIn, updateUser, user } =
+  const { isLoggedIn, setIsLoggedIn, updateUser, user, theme, toggleTheme } =
     useContext(AppContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -23,7 +24,6 @@ const Header = () => {
       updateUser(null);
       toast.success("Logged out Successfully");
       navigate("/");
-      //window.location.href = "/";
     } catch (error) {
       console.error("Logout failed", error);
       toast.error("Logout failed");
@@ -32,89 +32,96 @@ const Header = () => {
 
   const mobileNavLinks = (
     <>
-      <li>
-        <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>
-          Home
-        </Link>
-      </li>
-      <li>
-        <Link to="/income" onClick={() => setIsMobileMenuOpen(false)}>
-          Income
-        </Link>
-      </li>
-      <li>
-        <Link to="/expense" onClick={() => setIsMobileMenuOpen(false)}>
-          Expense
-        </Link>
-      </li>
-      <li>
-        <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-          Dashboard
-        </Link>
-      </li>
+      {[
+        { name: "Home", path: "/" },
+        { name: "Income", path: "/income" },
+        { name: "Expense", path: "/expense" },
+        { name: "Dashboard", path: "/dashboard" },
+      ].map(({ name, path }) => (
+        <li key={name}>
+          <Link
+            to={path}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="flex items-center px-4 py-2 rounded-md text-gray-700 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+          >
+            {name}
+          </Link>
+        </li>
+      ))}
     </>
   );
 
   return (
-    <header className="w-full bg-white shadow-lg px-4 py-2 relative">
+    <header className="w-full bg-white dark:bg-slate-800 shadow-lg px-4 py-3 relative transition-colors">
       <div className="flex items-center justify-between">
-        {/* Logo & Name*/}
+        {/* Logo & Name */}
         <div
-          className="logo-container flex items-center gap-3 cursor-pointer transition duration-200 hover:opacity-80"
+          className="flex items-center gap-3 cursor-pointer transition hover:opacity-80"
           onClick={() => navigate("/")}
         >
           <img
-            className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-lg"
+            className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
             src={LOGO_URL}
             alt="Logo"
           />
-          <p className="text-3xl font-extrabold text-gray-900 tracking-tight hover:text-blue-600 transition duration-300 animate-bounce">
+          <p className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight hover:text-blue-600 transition duration-300">
             Finly
           </p>
         </div>
 
-        <nav className="hidden md:flex items-center gap-8 font-medium text-gray-700">
-          {isLoggedIn && (
-            <>
-              {[
-                { name: "Home", path: "/" },
-                { name: "Income", path: "/income" },
-                { name: "Expense", path: "/expense" },
-                { name: "Dashboard", path: "/dashboard" },
-              ].map(({ name, path }) => (
-                <NavLink
-                  key={path}
-                  to={path}
-                  className={({ isActive }) =>
-                    `relative group px-2 py-1 font-semibold transition-colors duration-200 text-gray-700 ${
-                      isActive && "hover:text-blue-600"
-                    }`
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      {name}
-                      <span
-                        className={`absolute left-0 -bottom-1 w-full h-0.5 bg-blue-600 transition-transform duration-300 origin-left ${
-                          isActive
-                            ? "scale-x-100"
-                            : "scale-x-0 group-hover:scale-x-100"
-                        }`}
-                      ></span>
-                    </>
-                  )}
-                </NavLink>
-              ))}
-            </>
-          )}
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-8 text-gray-700 dark:text-gray-200 font-medium">
+          {isLoggedIn &&
+            [
+              { name: "Home", path: "/" },
+              { name: "Income", path: "/income" },
+              { name: "Expense", path: "/expense" },
+              { name: "Dashboard", path: "/dashboard" },
+            ].map(({ name, path }) => (
+              <NavLink
+                key={path}
+                to={path}
+                className={({ isActive }) =>
+                  `relative group px-2 py-1 font-semibold transition-colors duration-200 ${
+                    isActive ? "text-blue-600" : "hover:text-blue-600"
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    {name}
+                    <span
+                      className={`absolute left-0 -bottom-1 w-full h-0.5 bg-blue-600 transition-transform duration-300 origin-left ${
+                        isActive
+                          ? "scale-x-100"
+                          : "scale-x-0 group-hover:scale-x-100"
+                      }`}
+                    ></span>
+                  </>
+                )}
+              </NavLink>
+            ))}
         </nav>
 
         {/* Right Section */}
-        <div className="flex items-center gap-4">
-          {/* Show burger menu only when logged in */}
+        <div className="flex items-center gap-3">
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+            aria-label="Toggle Theme"
+          >
+            {theme === "dark" ? (
+              <SunIcon className="w-6 h-6 text-yellow-400" />
+            ) : (
+              <MoonIcon className="w-6 h-6 text-gray-700" />
+            )}
+          </button>
+
+          {/* Burger Menu */}
           {isLoggedIn && (
             <button
-              className="md:hidden text-3xl focus:outline-none"
+              className="md:hidden text-3xl text-gray-700 dark:text-gray-100 focus:outline-none"
               onClick={() => setIsMobileMenuOpen((prev) => !prev)}
               aria-label="Toggle menu"
             >
@@ -122,7 +129,7 @@ const Header = () => {
             </button>
           )}
 
-          {/* Profile menu or Register link */}
+          {/* Profile or Register */}
           {isLoggedIn ? (
             <ProfileMenu user={user} onLogout={handleLogOut} />
           ) : (
@@ -137,10 +144,10 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu — only if logged in */}
+      {/* Mobile Dropdown */}
       {isLoggedIn && isMobileMenuOpen && (
-        <div className="md:hidden mt-2 bg-white p-4 absolute right-4 top-20 z-50 w-48 shadow-xl rounded-lg">
-          <ul className="flex flex-col gap-3">{mobileNavLinks}</ul>
+        <div className="md:hidden mt-2 bg-white dark:bg-gray-900 p-4 absolute right-4 top-20 z-50 w-48 shadow-xl rounded-lg">
+          <ul className="flex flex-col gap-2">{mobileNavLinks}</ul>
         </div>
       )}
     </header>

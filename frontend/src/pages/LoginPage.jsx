@@ -43,8 +43,8 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 text-center">
-      <div className="bg-slate-900 text-white rounded-lg w-full max-w-md p-8 shadow-lg">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 text-center bg-gray-100 dark:bg-gray-900 transition-colors">
+      <div className="bg-white dark:bg-slate-950 text-gray-800 dark:text-gray-100 rounded-lg w-full max-w-md p-8 shadow-xl transition-colors">
         <h2 className="text-2xl font-bold mb-6">
           {register ? "Create Account" : "Login"}
         </h2>
@@ -55,7 +55,7 @@ export const LoginPage = () => {
               placeholder="User Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="px-4 py-2 rounded bg-slate-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className="px-4 py-2 rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
             />
           )}
           <input
@@ -63,7 +63,7 @@ export const LoginPage = () => {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="px-4 py-2 rounded bg-slate-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            className="px-4 py-2 rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
           />
           <div className="relative">
             <input
@@ -71,10 +71,10 @@ export const LoginPage = () => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 pr-10 rounded bg-slate-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className="w-full px-4 py-2 pr-10 rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
             />
             <span
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-lg"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-600 dark:text-gray-300"
               onClick={() => setShowPassword((prev) => !prev)}
             >
               {!showPassword ? (
@@ -86,7 +86,7 @@ export const LoginPage = () => {
           </div>
           {!register && (
             <div
-              className="flex justify-start font-light text-sm text-cyan-500 cursor-pointer w-29"
+              className="flex justify-start font-light text-sm text-cyan-600 dark:text-cyan-400 cursor-pointer w-fit"
               onClick={() => navigate("/reset-password")}
             >
               Forget password?
@@ -94,16 +94,16 @@ export const LoginPage = () => {
           )}
           <Button
             type="submit"
-            className="bg-cyan-400 text-slate-900 font-semibold py-2 px-4 rounded hover:bg-cyan-300 transition cursor-pointer w-full"
+            className="bg-cyan-500 hover:bg-cyan-400 text-white font-semibold w-full"
           >
             {register ? "Register" : "Login"}
           </Button>
         </form>
-        <p className="mt-3 text-sm text-gray-200">
-          {register ? "Already have an acount?" : "Don't have an account?"}
+        <p className="mt-3 text-sm text-gray-700 dark:text-gray-300">
+          {register ? "Already have an account?" : "Don't have an account?"}
         </p>
         <p
-          className="font-light text-sm text-cyan-500 cursor-pointer"
+          className="font-light text-sm text-cyan-600 dark:text-cyan-400 cursor-pointer"
           onClick={() => (navigate("/login"), setRegister(!register))}
         >
           {register ? "Login" : "Register"}

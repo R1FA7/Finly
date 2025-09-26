@@ -178,16 +178,16 @@ export const DashboardPage = () => {
   }
 
   return (
-    <div className="">
+    <div className="dark:bg-gray-900 dark:text-gray-100">
       <div className="m-2">
-        <h1 className="text-4xl font-bold text-slate-800 mb-2 text-center gap-2">
+        <h1 className="text-4xl font-bold text-slate-800 mb-2 text-center gap-2 dark:bg-gray-900 dark:text-gray-100">
           Dashboard
         </h1>
-        <p className="text-gray-500 text-center">
+        <p className="text-gray-500 text-center dark:text-gray-400 ">
           Track your income, expenses, and manage your finances effectively.
         </p>
       </div>
-      <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200 relative">
+      <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200 relative dark:bg-gray-900 dark:text-gray-100">
         <Button
           onClick={() => setShowForm(true)}
           className="bg-blue-600 hover:bg-slate-700 transform text-white flex items-center gap-2 absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2"
@@ -258,11 +258,13 @@ export const DashboardPage = () => {
           loading={btnLoadingMap.submitTxns}
         />
       )}
-      <div className="bg-white rounded-lg shadow-md p-6 mx-2 mb-4 mt-8 border border-gray-200">
+      <div className="bg-white rounded-lg shadow-md p-6 mx-2 mb-4 mt-8 border border-gray-200 dark:bg-gray-900 dark:text-gray-100">
         {/* Title and Description */}
         <div className="mb-6 text-center">
-          <p className="text-lg font-semibold text-slate-800">Set Your Goal</p>
-          <p className="mt-3 text-gray-600 text-sm max-w-md mx-auto">
+          <p className="text-lg font-semibold text-slate-800 dark:bg-gray-900 dark:text-gray-100">
+            Set Your Goal
+          </p>
+          <p className="mt-3 text-gray-600 text-sm max-w-md mx-auto dark:bg-gray-900 dark:text-gray-400">
             Define your savings target and track your progress effectively.
           </p>
         </div>
@@ -295,7 +297,7 @@ export const DashboardPage = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-4 mx-1.5 mb-1.5 mt-8 border border-gray-200">
+      <div className="bg-white rounded-lg shadow-md p-4 mx-1.5 mb-1.5 mt-8 border border-gray-200 dark:bg-gray-900">
         <DashboardToolBar
           onSearch={(query) => handleSearch(query)}
           onFilterChange={(newFilters) => handleFilterChange(newFilters)}
@@ -316,7 +318,7 @@ export const DashboardPage = () => {
           callFrom={"dashboard"}
         />
       </div>
-      <div className="bg-white rounded-lg shadow-md p-4 mx-1.5 mb-1.5 mt-8 border border-gray-200 relative">
+      <div className="bg-white rounded-lg shadow-md p-4 mx-1.5 mb-1.5 mt-8 border border-gray-200 relative dark:bg-gray-900">
         <LineBreakDownChart data={dashboardStats?.breakdowns?.weekly} />
       </div>
     </div>

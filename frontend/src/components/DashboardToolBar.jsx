@@ -50,7 +50,7 @@ export const DashboardToolBar = ({
   }, [searchTerm]);
 
   return (
-    <div className="flex flex-wrap items-center gap-3 p-4 bg-white shadow-md rounded-lg mb-4 border border-gray-200">
+    <div className="flex flex-wrap items-center gap-3 p-4 bg-white shadow-md rounded-lg mb-4 border border-gray-200 dark:bg-gray-900 ">
       {/* search  */}
       <div className="relative w-full md:w-1/2">
         <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -71,17 +71,21 @@ export const DashboardToolBar = ({
         </Button>
         {/* Filter Popover */}
         <Popover className="relative">
-          <PopoverButton className="flex justify-center items-center gap-2 border px-4 py-2 rounded-md border-gray-500 text-gray-800 hover:bg-gray-200">
+          <PopoverButton
+            className="flex justify-center items-center gap-2 border px-4 py-2 rounded-md border-gray-500 text-gray-800 
+          dark:bg-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-800"
+          >
             <AdjustmentsHorizontalIcon className="w-5 h-5" />
             Filter
           </PopoverButton>
-          <PopoverPanel className="absolute left-auto right-0 z-20 mt-2 w-80 bg-white border border-gray-200 rounded-md shadow-lg p-4 space-y-4">
+          <PopoverPanel className="absolute left-auto right-0 z-20 mt-2 w-80 bg-white dark:bg-gray-900  border border-gray-200 rounded-md shadow-lg p-4 space-y-4">
             <div className="flex text-sm items-center gap-2">
-              <label className="text-gray-600">Type: </label>
+              <label className="text-gray-600 dark:text-gray-100">Type: </label>
               <select
                 value={localFilters.type}
                 onChange={(e) => handleFilterChange("type", e.target.value)}
-                className="border border-gray-300 rounded-md px-2 py-1"
+                className="border border-gray-300 rounded-md px-2 py-1
+                focus:ring-blue-400 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
               >
                 <option value="">All Types</option>
                 <option value="income">Income</option>
@@ -90,11 +94,14 @@ export const DashboardToolBar = ({
             </div>
             {/* source  */}
             <div className="flex text-sm mt-1 gap-2 items-center">
-              <label className="text-gray-600">Source:</label>
+              <label className="text-gray-600 dark:text-gray-100">
+                Source:
+              </label>
               <select
                 value={localFilters.source}
                 onChange={(e) => handleFilterChange("source", e.target.value)}
-                className="border border-gray-300 rounded-md px-2 py-1"
+                className="border border-gray-300 rounded-md px-2 py-1
+                focus:ring-blue-400 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
               >
                 <option value="">All Sources</option>
                 {sourceOptions[localFilters.type || "all"].map((src) => (
@@ -106,7 +113,9 @@ export const DashboardToolBar = ({
             </div>
             {/* Amount Range Query  */}
             <div className="flex items-center text-sm gap-2">
-              <label className="text-gray-600">Amount Range: </label>
+              <label className="text-gray-600 dark:text-gray-100">
+                Amount Range:{" "}
+              </label>
               <div className="flex gap-2">
                 <input
                   type="number"
@@ -132,7 +141,9 @@ export const DashboardToolBar = ({
             </div>
             {/* Date Range Query */}
             <div className="flex flex-col text-sm gap-2">
-              <label className="text-gray-600">Date Range:</label>
+              <label className="text-gray-600 dark:text-gray-100">
+                Date Range:
+              </label>
               <div className="flex gap-2">
                 <input
                   type="date"

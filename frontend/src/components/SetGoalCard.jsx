@@ -30,7 +30,7 @@ export const SetGoalCard = ({ data, type, onSubmitGoal }) => {
   };
   return (
     <div
-      className={`bg-white rounded-lg p-4 border relative shadow-md transition-all duration-300 ${
+      className={`bg-white rounded-lg p-4 border relative shadow-md transition-all duration-300 dark:bg-gray-900 dark:text-gray-100 ${
         remaining < 0
           ? type === "expense"
             ? "border-red-500 shadow-red-300 shadow-lg"
@@ -39,14 +39,14 @@ export const SetGoalCard = ({ data, type, onSubmitGoal }) => {
       }`}
     >
       {/* tag */}
-      <div className="absolute top-1/2 -left-23 -rotate-90 py-0.3 px-15 bg-slate-300 rounded-md -translate-y-1/2">
-        <p className="text-gray-700 font-semibold text-sm uppercase tracking-wide">
+      <div className="absolute top-1/2 -left-23 -rotate-90 py-0.3 px-15 bg-slate-300 rounded-md -translate-y-1/2 dark:bg-cyan-900 ">
+        <p className="text-gray-700 font-semibold text-sm uppercase tracking-wide dark:text-gray-100">
           {type}
         </p>
       </div>
       {/* icon  */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-500 p-3 rounded-full shadow-md border-2 border-white ring-2 ring-blue-300">
-        <CursorArrowRippleIcon className="w-5 h-5 text-white" />
+        <CursorArrowRippleIcon className="w-5 h-5 text-white dark:text-gray-100" />
       </div>
 
       <div className="flex w-full">
@@ -64,7 +64,9 @@ export const SetGoalCard = ({ data, type, onSubmitGoal }) => {
               <p className="text-xl font-bold text-emerald-600 mt-4">
                 TK {remaining}
               </p>
-              <p className="text-gray-500 text-sm tracking-wider">Remaining</p>
+              <p className="text-gray-500 text-sm tracking-wider dark:text-gray-400">
+                Remaining
+              </p>
             </>
           ) : (
             <>
@@ -75,7 +77,7 @@ export const SetGoalCard = ({ data, type, onSubmitGoal }) => {
               >
                 TK {Math.abs(remaining)}
               </p>
-              <p className="text-gray-500 text-sm tracking-wider">
+              <p className="text-gray-500 text-sm tracking-wider dark:text-gray-400 ">
                 {type === "expense" ? "Overused" : "Extra Earned"}
               </p>
             </>
@@ -97,22 +99,22 @@ export const SetGoalCard = ({ data, type, onSubmitGoal }) => {
                 Exceeded
               </p>
             ) : goalAmount > 0 ? (
-              <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-gray-700 text-center">
+              <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold text-gray-700 text-center dark:text-gray-300">
                 Reached <br />
                 {((currentAmount * 100) / goalAmount).toFixed(2)}%
               </p>
             ) : (
-              <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium text-center">
+              <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium text-center dark:text-gray-400">
                 No goal set
               </p>
             )}
           </div>
         </div>
         {isModalOn && (
-          <div className="absolute top-0 left-1/9 bg-white border border-gray-300 rounded-lg shadow-lg p-4 w-72 z-10">
+          <div className="absolute top-0 left-1/9 bg-white border border-gray-300 rounded-lg shadow-lg p-4 w-72 z-10 dark:bg-gray-900 dark:text-gray-100">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="flex justify-between items-center mb-3">
-                <h3 className="text-base font-semibold text-gray-800 tracking-wide">
+                <h3 className="text-base font-semibold text-gray-800 tracking-wide dark:text-gray-100">
                   Set/Edit Goal
                 </h3>
                 <button
@@ -128,7 +130,7 @@ export const SetGoalCard = ({ data, type, onSubmitGoal }) => {
               <div className="flex flex-col">
                 <label
                   htmlFor="start-date"
-                  className="text-sm font-medium text-gray-700 mb-1"
+                  className="text-sm font-medium text-gray-700 mb-1 dark:text-gray-100"
                 >
                   Start Date
                 </label>
@@ -145,7 +147,7 @@ export const SetGoalCard = ({ data, type, onSubmitGoal }) => {
               <div className="flex flex-col">
                 <label
                   htmlFor="end-date"
-                  className="text-sm font-medium text-gray-700 mb-1"
+                  className="text-sm font-medium text-gray-700 dark:text-gray-100 mb-1"
                 >
                   End Date
                 </label>
@@ -166,7 +168,7 @@ export const SetGoalCard = ({ data, type, onSubmitGoal }) => {
               <div className="flex flex-col">
                 <label
                   htmlFor="target-amount"
-                  className="text-sm font-medium text-gray-700 mb-1"
+                  className="text-sm font-medium text-gray-700 mb-1 dark:text-gray-100"
                 >
                   Target Amount (TK)
                 </label>

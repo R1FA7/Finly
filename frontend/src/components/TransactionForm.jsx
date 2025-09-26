@@ -9,6 +9,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "./Button";
+
 export const TransactionForm = ({
   txnType = "income",
   typeSelectDisabled = false,
@@ -27,6 +28,7 @@ export const TransactionForm = ({
       ? new Date(safeInitialData.date).toISOString().split("T")[0]
       : new Date().toISOString().split("T")[0]
   );
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!source.trim() || !amount || Number(amount) <= 0) {
@@ -42,22 +44,24 @@ export const TransactionForm = ({
     console.log("K", txnData);
     onSubmit(txnData);
   };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg w-full max-w-md p-6 relative">
         <button
           onClick={onClose}
-          className="absolute top-2 right-3 text-gray-500 hover:text-red-500 text-xl cursor-pointer"
+          className="absolute top-2 right-3 text-gray-500 dark:text-gray-400 hover:text-red-500 transition text-xl cursor-pointer"
+          aria-label="Close form"
         >
           ×
         </button>
-        <h2 className="text-2xl font-semibold text-center mb-4">
+        <h2 className="text-2xl font-semibold text-center mb-4 text-gray-900 dark:text-gray-100">
           {safeInitialData._id
             ? `Edit ${type}`
             : `Add ${type.charAt(0).toUpperCase() + type.slice(1)}`}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Transaction Type
           </label>
           {typeSelectDisabled ? (
@@ -67,10 +71,11 @@ export const TransactionForm = ({
                 value={txnType.charAt(0).toUpperCase() + txnType.slice(1)}
                 disabled
                 className={`w-full px-4 py-2 rounded-md border border-gray-300 bg-gray-100 cursor-not-allowed
+                dark:bg-gray-800 dark:border-gray-700
                 ${
                   txnType === "income"
-                    ? "text-green-600 font-semibold"
-                    : "text-red-600 font-semibold"
+                    ? "text-green-600 font-semibold dark:text-green-400"
+                    : "text-red-600 font-semibold dark:text-red-400"
                 }`}
               />
             </div>
@@ -79,7 +84,7 @@ export const TransactionForm = ({
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="w-full px-4 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-400"
+                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
               >
                 <option value="income">Income</option>
                 <option value="expense">Expense</option>
@@ -87,7 +92,7 @@ export const TransactionForm = ({
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Source
             </label>
             <input
@@ -100,11 +105,11 @@ export const TransactionForm = ({
               }
               value={source}
               onChange={(e) => setSource(e.target.value)}
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-400 "
+              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Amount
             </label>
             <input
@@ -117,18 +122,18 @@ export const TransactionForm = ({
                 if (e.key === "-" || e.key === "e") e.preventDefault();
               }}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-400 "
+              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Date
             </label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-400 "
+              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
             />
           </div>
           <Button

@@ -71,7 +71,7 @@ export const HomePage = () => {
     );
   }
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] text-center px-4 relative">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] text-center px-4 relative dark:bg-gray-900">
       {/* notification container(needed for showing 2 notification together)  */}
       {/* container remains top-25 but notification comes space-y-3  */}
       <div className="absolute top-25 right-5 z-50 space-y-3">
@@ -105,13 +105,13 @@ export const HomePage = () => {
         })}
       </div>
 
-      <h3 className="text-lg text-gray-700 max-w-xl mb-2">
+      <h3 className="text-lg text-gray-700 dark:text-gray-200 max-w-xl mb-2">
         Hey {user ? String(user.name).toUpperCase() : "there"}
       </h3>
-      <h1 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-4">
+      <h1 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-4 dark:text-gray-200">
         Welcome to Finly
       </h1>
-      <p className="text-lg text-gray-600 max-w-xl mb-2">
+      <p className="text-lg text-gray-600 max-w-xl mb-2 dark:text-gray-300">
         Smarter financial tracking. Spend smart. Save smarter.
       </p>
       <Button onClick={() => navigate("/dashboard")}>Get Started</Button>

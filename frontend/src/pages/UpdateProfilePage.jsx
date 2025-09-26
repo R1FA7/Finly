@@ -22,9 +22,9 @@ export const UpdateProfilePage = () => {
     }
   };
   return (
-    <div className="py-10 px-4">
-      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8">
-        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
+    <div className="py-10 px-4 border-gray-200 dark:bg-gray-900">
+      <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 shadow-md rounded-lg p-8 border-gray-200">
+        <h2 className="text-2xl font-semibold text-center text-gray-800 dark:text-gray-200 mb-6">
           Update Your Profile
         </h2>
 

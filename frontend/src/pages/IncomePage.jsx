@@ -179,8 +179,8 @@ export const IncomePage = () => {
     );
   }
   return (
-    <div>
-      <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200">
+    <div className="dark:bg-gray-900 dark:text-gray-100">
+      <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200 dark:bg-gray-900">
         <div className="flex flex-col md:flex-row justify-center items-center md:items-center gap-6 mb-6">
           <div className="flex flex-wrap justify-center gap-6">
             <SummaryCard
@@ -205,7 +205,9 @@ export const IncomePage = () => {
             placeholder="🔍 Search Income (e.g. Salary)"
             value={searchKey}
             onChange={(e) => setSearchKey(e.target.value)}
-            className="flex-1 border border-gray-300 px-4 py-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+            className="flex-1 border border-gray-300 px-4 py-2 rounded-lg shadow-sm 
+            dark:text-gray-400
+            focus:outline-none focus:ring-2 focus:ring-green-400"
           />
           <Button
             onClick={handleClick}
@@ -247,9 +249,11 @@ export const IncomePage = () => {
           </div>
         )}
       </div>
-      <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200">
+      <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200 dark:bg-gray-900">
         {searchActive && filteredIncome.length === 0 ? (
-          <div className="text-center text-gray-500 py-8">Not found.</div>
+          <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+            Not found.
+          </div>
         ) : (
           <TransactionList
             type={"income"}
@@ -260,9 +264,11 @@ export const IncomePage = () => {
           />
         )}
       </div>
-      <div className="bg-white rounded-lg shadow-lg p-4 m-1.5 border border-gray-200 relative">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-4 m-1.5 border border-gray-200 relative">
         <select
-          className="border-gray-900 absolute right-3 top-3 p-2 drop-shadow-emerald-900 rounded-lg font-semibold"
+          className="border-gray-900 absolute right-3 top-3 p-2 drop-shadow-emerald-900 rounded-lg font-semibold
+          dark:bg-gray-800 dark:text-gray-100
+          dark:border-gray-700"
           value={selectedFrequency}
           onChange={(e) => setSelectedFrequency(e.target.value)}
         >
@@ -280,7 +286,7 @@ export const IncomePage = () => {
           barColors={"#0ea5e9"}
         />
       </div>
-      <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200">
+      <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200 dark:bg-gray-900">
         <HorizontalBarBreakdown data={sourceWiseIncome} type="income" />
       </div>
     </div>
