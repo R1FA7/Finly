@@ -2,7 +2,7 @@
 
 Finly is a full-stack MERN (MongoDB, Express.js, React, Node.js) application for managing personal finances. It allows users to track income and expenses, view real-time financial analytics, and manage their account with secure authentication and authorization features.
 
-🚀 **[Live Site](https://finly-production-79f0.up.railway.app)**
+🚀 **[Live Site](https://finly-frontend.onrender.com)**
 
 ---
 
