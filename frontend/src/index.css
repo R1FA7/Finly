@@ -5,3 +5,29 @@
   font-family: "Inter", sans-serif;
 }
 @custom-variant dark (&:where(.dark, .dark *));
+
+@keyframes right-to-left {
+  0% {
+    transform: translateX(100%);
+  }
+
+  33% {
+    transform: tranlateX(33%);
+  }
+
+  66% {
+    transform: tranlateX(10%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes drop-from-top {
+  0% {
+    transform: translateY(-3rem);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

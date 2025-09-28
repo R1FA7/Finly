@@ -6,6 +6,7 @@ import { AppContext } from "../context/AppContext";
 import { API_PATHS } from "../utils/apiPaths";
 import axiosInstance from "../utils/axiosInstance";
 import { LOGO_URL } from "../utils/constants";
+import { AnimatedName } from "./AnimatedName";
 import { ProfileMenu } from "./ProfileMenu";
 
 const Header = () => {
@@ -52,11 +53,11 @@ const Header = () => {
   );
 
   return (
-    <header className="w-full bg-white dark:bg-slate-800 shadow-lg px-4 py-3 relative transition-colors">
+    <header className="w-full bg-white dark:bg-slate-800 shadow-lg px-4 py-3 transition-colors">
       <div className="flex items-center justify-between">
         {/* Logo & Name */}
         <div
-          className="flex items-center gap-3 cursor-pointer transition hover:opacity-80"
+          className="flex items-center gap-3 cursor-pointer"
           onClick={() => navigate("/")}
         >
           <img
@@ -64,9 +65,7 @@ const Header = () => {
             src={LOGO_URL}
             alt="Logo"
           />
-          <p className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight hover:text-blue-600 transition duration-300">
-            Finly
-          </p>
+          <AnimatedName />
         </div>
 
         {/* Desktop Nav */}

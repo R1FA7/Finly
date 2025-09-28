@@ -44,19 +44,19 @@ export async function register(req,res){
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
     
-    try {
-      const mailOptions = {
-        from : process.env.GMAIL_USER,
-        to : email,
-        subject : 'Welcome to Finly.',
-        text : `Welcome to the Finly. Your account has been created with email id: ${email}`
-      }
+    // try {
+    //   const mailOptions = {
+    //     from : process.env.GMAIL_USER,
+    //     to : email,
+    //     subject : 'Welcome to Finly.',
+    //     text : `Welcome to the Finly. Your account has been created with email id: ${email}`
+    //   }
 
-      await transporter.sendMail(mailOptions)
-      console.log('Welcome email sent to', email);
-    } catch (mailError) {
-      console.warn('Failed to send welcome email:', mailError.message);
-    }
+    //   await transporter.sendMail(mailOptions)
+    //   console.log('Welcome email sent to', email);
+    // } catch (mailError) {
+    //   console.warn('Failed to send welcome email:', mailError.message);
+    // }
 
     return res.status(201).json({
       success: true,

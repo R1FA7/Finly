@@ -52,6 +52,8 @@ export const LoginPage = () => {
           {register && (
             <input
               type="text"
+              name="name"
+              autoComplete="on"
               placeholder="User Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -61,6 +63,8 @@ export const LoginPage = () => {
           <input
             type="email"
             placeholder="Email"
+            name="email"
+            autoComplete="on"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="px-4 py-2 rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
