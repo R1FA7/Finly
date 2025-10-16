@@ -1,17 +1,15 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Header from "./components/Header";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 import { DashboardPage } from "./pages/DashboardPage";
 import { ExpensePage } from "./pages/ExpensePage";
 import { HomePage } from "./pages/HomePage";
 import { IncomePage } from "./pages/IncomePage";
+import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
-import { ShopPage } from "./pages/ShopPage";
-import TestPage from "./pages/TestPage";
 import { UpdateProfilePage } from "./pages/UpdateProfilePage";
 import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 
@@ -19,26 +17,41 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <Layout>
-        <HomePage />
-      </Layout>
+      <PublicRoute>
+        <Layout>
+          <LandingPage />
+        </Layout>
+      </PublicRoute>
     ),
   },
   {
     path: "/login",
     element: (
-      <Layout>
-        <LoginPage />
-      </Layout>
+      <PublicRoute>
+        <Layout>
+          <LoginPage />
+        </Layout>
+      </PublicRoute>
     ),
   },
   {
     path: "/reset-password",
     element: (
       <div>
-        <Header />
-        <ResetPasswordPage />
+        <Layout>
+          <ResetPasswordPage />
+        </Layout>
       </div>
+    ),
+  },
+  {
+    path: "/home",
+    element: (
+      <ProtectedRoute>
+        <Layout>
+          <HomePage />
+        </Layout>
+      </ProtectedRoute>
     ),
   },
   {
@@ -48,24 +61,6 @@ const router = createBrowserRouter([
         <Layout>
           <VerifyEmailPage />
         </Layout>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/shop",
-    element: (
-      <ProtectedRoute>
-        <Header />
-        <ShopPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/test",
-    element: (
-      <ProtectedRoute>
-        <Header />
-        <TestPage />
       </ProtectedRoute>
     ),
   },

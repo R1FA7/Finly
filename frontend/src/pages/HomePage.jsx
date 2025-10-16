@@ -74,7 +74,7 @@ export const HomePage = () => {
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] text-center px-4 relative dark:bg-gray-900">
       {/* notification container(needed for showing 2 notification together)  */}
       {/* container remains top-25 but notification comes space-y-3  */}
-      <div className="absolute top-25 right-5 z-50 space-y-3">
+      <div className="absolute bottom-10 left-5 z-50 space-y-3">
         {["income", "expense"].map((type) => {
           const goal = goals?.[type];
           const showNotification =

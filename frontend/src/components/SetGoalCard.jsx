@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { Button } from "./Button";
 import { DonutChart } from "./charts/DonutChart";
 
-export const SetGoalCard = ({ data, type, onSubmitGoal }) => {
+export const SetGoalCard = ({ data, type, onSubmitGoal, readOnly = false }) => {
   const [isModalOn, setIsModalOn] = useState(false);
   console.log("SETCARD", data);
   const { amount: goalAmount, currentAmount, remaining } = data;
@@ -45,15 +45,18 @@ export const SetGoalCard = ({ data, type, onSubmitGoal }) => {
         </p>
       </div>
       {/* icon  */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-500 p-3 rounded-full shadow-md border-2 border-white ring-2 ring-blue-300">
-        <CursorArrowRippleIcon className="w-5 h-5 text-white dark:text-gray-100" />
-      </div>
+      {!readOnly && (
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-500 p-3 rounded-full shadow-md border-2 border-white ring-2 ring-blue-300">
+          <CursorArrowRippleIcon className="w-5 h-5 text-white dark:text-gray-100" />
+        </div>
+      )}
 
       <div className="flex w-full">
         <div className="w-1/3 flex flex-col items-center justify-center">
           <Button
             className="tracking-wider"
             onClick={() => setIsModalOn(!isModalOn)}
+            disabled={readOnly}
           >
             Goal TK {goalAmount}
           </Button>

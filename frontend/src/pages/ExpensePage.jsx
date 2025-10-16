@@ -173,6 +173,19 @@ export const ExpensePage = () => {
     setShowForm(true);
   };
 
+  const getFrequencyDescription = () => {
+    switch (selectedFrequency) {
+      case "weekly":
+        return "last 7 days";
+      case "monthly":
+        return "last 12 months";
+      case "yearly":
+        return "last few years";
+      default:
+        return `selected ${selectedFrequency} period`;
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
@@ -272,7 +285,9 @@ export const ExpensePage = () => {
       </div>
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-4 m-1.5 border border-gray-200 relative">
         <select
-          className="border-gray-900 absolute right-3 top-3 p-2 drop-shadow-emerald-900 rounded-lg font-semibold"
+          className="border-gray-900 absolute right-3 top-3 p-2 drop-shadow-emerald-900 rounded-lg font-semibold
+          dark:bg-gray-800 dark:text-gray-100
+          dark:border-gray-700"
           value={selectedFrequency}
           onChange={(e) => setSelectedFrequency(e.target.value)}
         >
@@ -280,6 +295,14 @@ export const ExpensePage = () => {
           <option value="monthly">monthly</option>
           <option value="yearly">yearly</option>
         </select>
+        <h2 className="text-lg font-semibold mb-4 text-center">
+          {selectedFrequency.charAt(0).toUpperCase() +
+            selectedFrequency.slice(1)}{" "}
+          Expense Trend
+        </h2>
+        <p className="text-sm text-gray-500 text-center mb-4 dark:text-gray-400">
+          Breakdown of expense over the {getFrequencyDescription()}
+        </p>
         <BarBreakdownChart
           data={eDashboardData?.[selectedFrequency]?.map((d) => ({
             period: d.period,

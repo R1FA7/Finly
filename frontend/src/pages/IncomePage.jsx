@@ -171,6 +171,18 @@ export const IncomePage = () => {
     setShowForm(true);
   };
 
+  const getFrequencyDescription = () => {
+    switch (selectedFrequency) {
+      case "weekly":
+        return "last 7 days";
+      case "monthly":
+        return "last 12 months";
+      case "yearly":
+        return "last few years";
+      default:
+        return `selected ${selectedFrequency} period`;
+    }
+  };
   if (loading) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
@@ -276,6 +288,14 @@ export const IncomePage = () => {
           <option value="monthly">monthly</option>
           <option value="yearly">yearly</option>
         </select>
+        <h2 className="text-lg font-semibold mb-4 text-center">
+          {selectedFrequency.charAt(0).toUpperCase() +
+            selectedFrequency.slice(1)}{" "}
+          Income Trend
+        </h2>
+        <p className="text-sm text-gray-500 text-center mb-4 dark:text-gray-400">
+          Breakdown of income over the {getFrequencyDescription()}
+        </p>
         <BarBreakdownChart
           data={iDashboardData?.[selectedFrequency]?.map((d) => ({
             period: d.period,
@@ -287,6 +307,12 @@ export const IncomePage = () => {
         />
       </div>
       <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200 dark:bg-gray-900">
+        <h2 className="text-lg font-semibold mb-4 text-center">
+          Source-wise Income Breakdown
+        </h2>
+        <p className="text-sm text-gray-500 text-center mb-4">
+          Visual representation of income sources and their relative amounts
+        </p>
         <HorizontalBarBreakdown data={sourceWiseIncome} type="income" />
       </div>
     </div>

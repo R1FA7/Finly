@@ -72,7 +72,7 @@ const Header = () => {
         <nav className="hidden md:flex items-center gap-8 text-gray-700 dark:text-gray-200 font-medium">
           {isLoggedIn &&
             [
-              { name: "Home", path: "/" },
+              { name: "Home", path: "/home" },
               { name: "Income", path: "/income" },
               { name: "Expense", path: "/expense" },
               { name: "Dashboard", path: "/dashboard" },
@@ -105,17 +105,19 @@ const Header = () => {
         {/* Right Section */}
         <div className="flex items-center gap-3">
           {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-            aria-label="Toggle Theme"
-          >
-            {theme === "dark" ? (
-              <SunIcon className="w-6 h-6 text-yellow-400" />
-            ) : (
-              <MoonIcon className="w-6 h-6 text-gray-700" />
-            )}
-          </button>
+          {isLoggedIn && (
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+              aria-label="Toggle Theme"
+            >
+              {theme === "dark" ? (
+                <SunIcon className="w-6 h-6 text-yellow-400" />
+              ) : (
+                <MoonIcon className="w-6 h-6 text-gray-700" />
+              )}
+            </button>
+          )}
 
           {/* Burger Menu */}
           {isLoggedIn && (

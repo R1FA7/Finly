@@ -319,6 +319,12 @@ export const DashboardPage = () => {
         />
       </div>
       <div className="bg-white rounded-lg shadow-md p-4 mx-1.5 mb-1.5 mt-8 border border-gray-200 relative dark:bg-gray-900">
+        <h2 className="text-lg font-semibold mb-4 text-center">
+          Income Vs Expense Breakdown
+        </h2>
+        <p className="text-sm text-gray-500 text-center mb-4">
+          Visual representation of income and expense amount in last week
+        </p>
         <LineBreakDownChart data={dashboardStats?.breakdowns?.weekly} />
       </div>
     </div>

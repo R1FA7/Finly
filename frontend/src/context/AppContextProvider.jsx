@@ -10,7 +10,7 @@ export const AppContextProvider = (props) => {
   const [loading, setLoading] = useState(true);
 
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem("theme") || "light";
+    return localStorage.getItem("theme") || "dark";
   });
 
   useEffect(() => {

@@ -33,7 +33,7 @@ export const LoginPage = () => {
         localStorage.setItem("access_token", res.data.access_token);
         setIsLoggedIn(true);
         updateUser(res.data.user);
-        navigate("/");
+        navigate("/home");
       } else {
         toast.error(res.data.message);
       }

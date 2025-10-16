@@ -13,7 +13,7 @@ import {
 const LineBreakDownChartComponent = ({ data }) => {
   return (
     <div>
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={200}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="period" />
@@ -31,9 +31,16 @@ const LineBreakDownChartComponent = ({ data }) => {
             type="monotone"
             dataKey="income"
             stroke="#16a34a"
-            strokeWidth={3}
+            strokeWidth={2}
+            dot={true}
           />
-          <Line type="" dataKey="expense" stroke="#dc2626" strokeWidth={3} />
+          <Line
+            type="monotone"
+            dataKey="expense"
+            stroke="#dc2626"
+            strokeWidth={2}
+            dot={true}
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>

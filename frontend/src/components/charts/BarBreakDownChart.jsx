@@ -16,7 +16,6 @@ const BarBreakdownChartComponent = ({
   frequency, // = { income: "#22c55e", expense: "#ef4444" },
   showBoth = false,
 }) => {
-  const styleText = (s) => s.charAt(0).toUpperCase() + s.slice(1);
   const formatDateToDayMonth = (dateStr) => {
     if (frequency === "yearly") return dateStr;
 
@@ -47,53 +46,35 @@ const BarBreakdownChartComponent = ({
     return `${getOrdinal(day)} ${monthShort}`;
   };
 
-  const getFrequencyDescription = () => {
-    switch (frequency) {
-      case "weekly":
-        return "last 7 days";
-      case "monthly":
-        return "last 12 months";
-      case "yearly":
-        return "last few years";
-      default:
-        return `selected ${frequency} period`;
-    }
-  };
-
   return (
-    <div className="">
-      <h2 className="text-lg font-semibold mb-4 text-center">
-        {" "}
-        {styleText(frequency)} {styleText(type)} Trend{" "}
-      </h2>
-      <p className="text-sm text-gray-500 text-center mb-4 dark:text-gray-400">
-        Breakdown of {type} over the {getFrequencyDescription()}
-      </p>
-
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={data}
-          margin={{ top: 10, right: 30, left: 30, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="5 5" />
-          <XAxis
-            dataKey="period"
-            tickFormatter={(value) => formatDateToDayMonth(value)}
-          />
-          <YAxis domain={[0, (dataMax) => dataMax * 0.8]} />
-          <Tooltip labelFormatter={(value) => formatDateToDayMonth(value)} />
-          <Legend />
+    <ResponsiveContainer width="100%" height={250}>
+      <BarChart
+        data={data}
+        margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
+      >
+        <CartesianGrid strokeDasharray="5 5" />
+        <XAxis
+          dataKey="period"
+          tickFormatter={(value) => formatDateToDayMonth(value)}
+        />
+        <YAxis domain={[0, (dataMax) => dataMax * 0.8]} />
+        <Tooltip labelFormatter={(value) => formatDateToDayMonth(value)} />
+        <Legend />
+        <Bar
+          dataKey={type}
+          fill={type === "income" ? "#0ea5e9" : "#ef4444"}
+          radius={[4, 4, 0, 0]}
+        />
+        {showBoth && (
           <Bar
-            dataKey={type}
-            fill={type === "income" ? "#0ea5e9" : "#ef4444"}
-            //name={styleText(type)}
+            dataKey="expense"
+            fill={"#ef4444"}
+            name="Expense"
+            radius={[4, 4, 0, 0]}
           />
-          {showBoth && (
-            <Bar dataKey="expense" fill={"#ef4444"} name="Expense" />
-          )}
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+        )}
+      </BarChart>
+    </ResponsiveContainer>
   );
 };
 export const BarBreakdownChart = React.memo(BarBreakdownChartComponent);
