@@ -5,7 +5,7 @@ import {
   PencilSquareIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom"; // Required for linking
+import { Link } from "react-router-dom";
 
 export const TransactionCard = ({
   transaction,

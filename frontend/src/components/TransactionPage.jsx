@@ -1,4 +1,9 @@
-import { ArrowDownTrayIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowDownTrayIcon,
+  PlusCircleIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
+import { useEffect, useRef } from "react";
 import { Button } from "./Button";
 import { BarBreakdownChart } from "./charts/BarBreakDownChart";
 import { HorizontalBarBreakdown } from "./charts/HorizontalBreakDownBar";
@@ -6,6 +11,8 @@ import { LoadingSpinner } from "./loaders/LoadingSpinner";
 import { SummaryCard } from "./SummaryCard";
 import { TransactionForm } from "./TransactionForm";
 import { TransactionList } from "./TransactionList";
+
+import { ButtonLoader } from "./loaders/ButtonLoader";
 
 export const TransactionPage = ({
   transactionType,
@@ -30,14 +37,32 @@ export const TransactionPage = ({
     total,
     maximum,
     loading,
-    btnLoading,
+    btnLoadingMap,
+    showConfirmModal, //before delete
+    setShowSrchSuggestions,
     handleSearch,
     handleSuggestionClick,
     handleSubmit,
-    handleDelete,
+    handleRequestDelete,
+    handleCancelDelete,
+    handleConfirmedDelete,
     handleDownloadExcel,
     handleEdit,
   } = useTransactionHook;
+
+  const searchContainterRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        searchContainterRef.current &&
+        !searchContainterRef.current.contains(event.target)
+      ) {
+        if (showSrchSuggestions) setShowSrchSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => removeEventListener("mousedown", handleClickOutside);
+  }, [showSrchSuggestions]);
 
   const getFrequencyDescription = () => {
     switch (selectedFrequency) {
@@ -85,14 +110,20 @@ export const TransactionPage = ({
 
         {/* Search Section */}
         <div className="flex flex-row items-center gap-2">
-          <div className="relative w-full sm:w-auto flex-1">
+          <div
+            className="relative w-full sm:w-auto flex-1"
+            ref={searchContainterRef}
+          >
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input
               type="text"
-              placeholder={`🔍 Search ${transactionType} (e.g. Salary)`}
+              placeholder={`Search ${transactionType} source (e.g. ${
+                transactionType === "income" ? "Salary" : "Rent"
+              })`}
               value={searchKey}
               onChange={(e) => setSearchKey(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              className="w-full border border-gray-300 px-4 py-2 rounded-lg shadow-sm 
+              className="w-full border border-gray-300 px-10 py-2 rounded-lg shadow-sm 
             dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
             />
 
@@ -124,9 +155,14 @@ export const TransactionPage = ({
           <Button
             onClick={handleDownloadExcel}
             className="bg-slate-600 hover:bg-slate-700 text-white"
+            disabled={btnLoadingMap.downloadTxns}
           >
             <ArrowDownTrayIcon className="w-5 h-5" />
-            Download {transactionType}
+            {btnLoadingMap.downloadTxns ? (
+              <ButtonLoader text="Downloading" />
+            ) : (
+              `Download ${transactionType}`
+            )}
           </Button>
           <Button
             onClick={() => setShowForm(true)}
@@ -147,7 +183,7 @@ export const TransactionPage = ({
                 setShowForm(false);
               }}
               onSubmit={handleSubmit}
-              loading={btnLoading}
+              loading={btnLoadingMap.submitTransaction}
             />
           </div>
         )}
@@ -157,16 +193,48 @@ export const TransactionPage = ({
       <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200 dark:bg-gray-900">
         {searchActive && filteredTransactions.length === 0 ? (
           <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-            Not found.
+            No {transactionType} found.
           </div>
         ) : (
-          <TransactionList
-            type={transactionType}
-            transactions={searchActive ? filteredTransactions : transactionData}
-            onEdit={(t) => handleEdit(t)}
-            onDelete={(id) => handleDelete(id)}
-            onDownloadExcel={() => handleDownloadExcel()}
-          />
+          <>
+            <TransactionList
+              type={transactionType}
+              transactions={
+                searchActive ? filteredTransactions : transactionData
+              }
+              onEdit={(t) => handleEdit(t)}
+              onDelete={(id) => handleRequestDelete(id)}
+              onDownloadExcel={() => handleDownloadExcel()}
+            />
+            {showConfirmModal && (
+              <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50">
+                <div className="bg-cyan-200 dark:bg-gray-700 p-6 rounded shadow-lg max-w-sm w-full">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                    Are you sure you want to delete this transaction?
+                  </h2>
+                  <div className="flex justify-end gap-4">
+                    <Button
+                      onClick={handleCancelDelete}
+                      className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-white"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleConfirmedDelete}
+                      className="px-4 py-2 rounded dark:bg-red-500 hover:bg-red-700 text-white"
+                      disabled={btnLoadingMap.deleteTxn}
+                    >
+                      {btnLoadingMap.deleteTxn ? (
+                        <ButtonLoader text="Deleting" />
+                      ) : (
+                        "Delete"
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 

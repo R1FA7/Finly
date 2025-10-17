@@ -9,6 +9,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "./Button";
+import { ButtonLoader } from "./loaders/ButtonLoader";
 
 export const TransactionForm = ({
   txnType = "income",
@@ -41,7 +42,6 @@ export const TransactionForm = ({
       amount: Number(amount),
       date,
     };
-    console.log("K", txnData);
     onSubmit(txnData);
   };
 
@@ -141,13 +141,17 @@ export const TransactionForm = ({
             type="submit"
             disabled={loading}
           >
-            {loading
-              ? safeInitialData._id
-                ? "Updating..."
-                : "Adding..."
-              : safeInitialData._id
-              ? "Update "
-              : "Add "}
+            {loading ? (
+              safeInitialData._id ? (
+                <ButtonLoader text="Updating" />
+              ) : (
+                <ButtonLoader text="Adding" />
+              )
+            ) : safeInitialData._id ? (
+              "Update "
+            ) : (
+              "Add "
+            )}
             {!loading && type.charAt(0).toUpperCase() + type.slice(1)}
           </Button>
         </form>

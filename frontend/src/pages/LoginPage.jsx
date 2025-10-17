@@ -3,7 +3,9 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Button } from "../components/Button";
+import { ButtonLoader } from "../components/loaders/ButtonLoader";
 import { AppContext } from "../context/AppContext";
+import { useButtonLoader } from "../hooks/useButtonLoader";
 import { API_PATHS } from "../utils/apiPaths";
 import axiosInstance from "../utils/axiosInstance";
 
@@ -16,30 +18,34 @@ export const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const { setIsLoggedIn, updateUser } = useContext(AppContext);
+  const { btnLoadingMap, withBtnLoading } = useButtonLoader();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    try {
-      const endpoint = register
-        ? API_PATHS.AUTH.REGISTER
-        : API_PATHS.AUTH.LOGIN;
-      const payload = register
-        ? { name, email, password }
-        : { email, password };
+    withBtnLoading("authenticating", async () => {
+      //await new Promise((resolve) => setTimeout(resolve, 6000));
+      try {
+        const endpoint = register
+          ? API_PATHS.AUTH.REGISTER
+          : API_PATHS.AUTH.LOGIN;
+        const payload = register
+          ? { name, email, password }
+          : { email, password };
 
-      const res = await axiosInstance.post(endpoint, payload);
+        const res = await axiosInstance.post(endpoint, payload);
 
-      if (res.data.success) {
-        localStorage.setItem("access_token", res.data.access_token);
-        setIsLoggedIn(true);
-        updateUser(res.data.user);
-        navigate("/home");
-      } else {
-        toast.error(res.data.message);
+        if (res.data.success) {
+          localStorage.setItem("access_token", res.data.access_token);
+          setIsLoggedIn(true);
+          updateUser(res.data.user);
+          navigate("/home");
+        } else {
+          toast.error(res.data.message);
+        }
+      } catch (error) {
+        toast.error(error?.response?.data?.message || "Something went wrong");
       }
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
-    }
+    });
   };
 
   return (
@@ -99,8 +105,20 @@ export const LoginPage = () => {
           <Button
             type="submit"
             className="bg-cyan-500 hover:bg-cyan-400 text-white font-semibold w-full"
+            disabled={btnLoadingMap.authenticating}
           >
-            {register ? "Register" : "Login"}
+            {register ? (
+              btnLoadingMap.authentacating ? (
+                <ButtonLoader text="Registering" />
+              ) : (
+                "Register"
+              )
+            ) : btnLoadingMap.authenticating ? (
+              <ButtonLoader text="Signing in" />
+            ) : (
+              "Sign in"
+            )}
+            {/* {register ? "Register" : "Login"} */}
           </Button>
         </form>
         <p className="mt-3 text-sm text-gray-700 dark:text-gray-300">

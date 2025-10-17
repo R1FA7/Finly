@@ -18,6 +18,8 @@ export const useTransactionManager =
   const [editingTxn, setEditingTxn] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [selectedFrequency, setSelectedFrequency] = useState("weekly")
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [selectedTxnId,setSelectedTxnId] = useState(null)//for delete
 
   const {loading, withLoading} = useLoader()
   const {btnLoadingMap, withBtnLoading} = useButtonLoader() 
@@ -32,6 +34,7 @@ export const useTransactionManager =
       ])
 
       setTransactionData(txnsRes?.data?.data)
+      console.log(txnsRes?.data?.data)
       setDashboardData(dashboardRes?.data?.data?.breakdowns)
     } catch (error) {
       console.error(`Error fetching ${transactionType} data`, error);
@@ -161,47 +164,64 @@ export const useTransactionManager =
     });
   };
 
-  // Handle delete
-  const handleDelete = async (txnId) => {
-    try {
+  // Handle delete: 3 steps
+  //step 1: show confirmation modal
+  const handleRequestDelete = (id) => {
+    setSelectedTxnId(id)
+    setShowConfirmModal(true)
+  }
+
+  //step 2: cancel delete
+  const handleCancelDelete = () => {
+    setShowConfirmModal(false)
+    setSelectedTxnId(null)
+  }
+
+  //step3 : nah delete that sh..
+  const handleConfirmedDelete = async () =>{
+    withBtnLoading("deleteTxn",async ()=>{
+      try {
       const res = await axiosInstance.delete(
-        API_PATHS.TRANSACTION.DELETE(txnId)
+        API_PATHS.TRANSACTION.DELETE(selectedTxnId)
       );
       if (res.data.success) {
-        toast.success(res.data.message);
         await fetchTransactions();
+        toast.success(res.data.message);
+        setShowConfirmModal(false)
+        setSelectedTxnId(null)
       }
     } catch (err) {
       console.error(`Error deleting ${transactionType}`, err);
       toast.error(`Failed to delete ${transactionType}`);
     }
-  };
+    })
+  }
 
-  // Handle download Excel
   const handleDownloadExcel = async () => {
     const confirmDownload = window.confirm(
       `Download full ${transactionType} Excel file?`
     );
     if (!confirmDownload) return;
+    withBtnLoading("downloadTxns",async ()=>{
+      try {
+        const res = await axiosInstance.get(
+          API_PATHS.TRANSACTION.DOWNLOAD_EXCEL(transactionType),
+          { responseType: "blob" }
+        );
 
-    try {
-      const res = await axiosInstance.get(
-        API_PATHS.TRANSACTION.DOWNLOAD_EXCEL(transactionType),
-        { responseType: "blob" }
-      );
-
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${transactionType}_details.xlsx`);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("Error downloading file", err);
-      toast.error("Failed to download the file. Please try again.");
-    }
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `${transactionType}_details.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error("Error downloading file", err);
+        toast.error("Failed to download the file. Please try again.");
+      }
+    })
   };
 
   // Handle edit
@@ -226,17 +246,21 @@ export const useTransactionManager =
     total,
     maximum,
     loading,
-    btnLoading: btnLoadingMap.submitTransaction,
+    btnLoadingMap,
+    showConfirmModal,
     
     //state methods 
     setSearchKey,
     setSelectedFrequency,
     setShowForm,
+    setShowSrchSuggestions,
     // Methods
     handleSearch,
     handleSuggestionClick,
     handleSubmit,
-    handleDelete,
+    handleRequestDelete,
+    handleCancelDelete,
+    handleConfirmedDelete,
     handleDownloadExcel,
     handleEdit,
   };

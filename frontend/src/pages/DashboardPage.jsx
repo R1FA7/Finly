@@ -4,10 +4,11 @@ import {
   PlusCircleIcon,
   ScaleIcon,
 } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "../components/Button";
 import { LineBreakDownChart } from "../components/charts/LineBreakDownChart";
+import { PieChartBreakdown } from "../components/charts/PieChart";
 import { DashboardToolBar } from "../components/DashboardToolBar";
 import { LoadingSpinner } from "../components/loaders/LoadingSpinner";
 import { SetGoalCard } from "../components/SetGoalCard";
@@ -18,6 +19,7 @@ import { useButtonLoader } from "../hooks/useButtonLoader";
 import { useLoader } from "../hooks/useLoader";
 import { API_PATHS } from "../utils/apiPaths";
 import axiosInstance from "../utils/axiosInstance";
+
 export const DashboardPage = () => {
   const [dashboardStats, setDashboardStats] = useState();
   const [filteredTxns, setFilteredTxns] = useState([]);
@@ -27,12 +29,19 @@ export const DashboardPage = () => {
   const { loading, withLoading } = useLoader();
   const { btnLoadingMap, withBtnLoading } = useButtonLoader();
 
+  const [incomeData, setIncomeData] = useState([]);
+  const [expenseData, setExpenseData] = useState([]);
+
   const fetchDashboardStats = async () => {
     try {
-      const res = await axiosInstance.get(API_PATHS.DASHBOARD.GET_DATA);
-      console.log("Fetched dashboard data:", res?.data?.data);
-      setDashboardStats(res?.data?.data);
-      return res?.data?.data;
+      const [incomeRes, expenseRes, dashboardRes] = await Promise.all([
+        axiosInstance.get(API_PATHS.TRANSACTION.GET_ALL("income")),
+        axiosInstance.get(API_PATHS.TRANSACTION.GET_ALL("expense")),
+        axiosInstance.get(API_PATHS.DASHBOARD.GET_DATA),
+      ]);
+      setDashboardStats(dashboardRes?.data?.data);
+      setIncomeData(incomeRes?.data?.data);
+      setExpenseData(expenseRes?.data?.data);
     } catch (err) {
       console.error("Failed to fetch dashboard stats", err);
     }
@@ -56,6 +65,25 @@ export const DashboardPage = () => {
     });
   }, []);
 
+  // Calculate source-wise breakdown
+  const calculateSourceBreakdown = (data) => {
+    const grouped = data.reduce((acc, { source, amount }) => {
+      acc[source] = (acc[source] || 0) + amount;
+      return acc;
+    }, {});
+    return Object.entries(grouped)
+      .map(([source, amount]) => ({ source, amount }))
+      .sort((a, b) => b.amount - a.amount);
+  };
+  const incomeBreakdown = useMemo(
+    () => calculateSourceBreakdown(incomeData),
+    [incomeData]
+  );
+
+  const expenseBreakdown = useMemo(
+    () => calculateSourceBreakdown(expenseData),
+    [expenseData]
+  );
   const handleSubmit = (txnData) => {
     withBtnLoading("submitTxns", async () => {
       const cleanedTxnData = {
@@ -158,16 +186,6 @@ export const DashboardPage = () => {
       console.error("Error saving goal", error.message);
     }
   };
-  // const sourceWiseIncome = useMemo(() => {
-  //   const res = incomeData.reduce((acc, { source, amount }) => {
-  //     acc[source] = (acc[source] || 0) + amount;
-  //     return acc;
-  //   }, {});
-  //   console.log(res);
-  //   return Object.entries(res)
-  //     .map(([source, amount]) => ({ source, amount }))
-  //     .sort((a, b) => b.amount - a.amount);
-  // }, [incomeData]);
 
   if (loading) {
     return (
@@ -326,6 +344,34 @@ export const DashboardPage = () => {
           Visual representation of income and expense amount in last week
         </p>
         <LineBreakDownChart data={dashboardStats?.breakdowns?.weekly} />
+      </div>
+      <div className="bg-white rounded-lg shadow-md p-6 mx-2 my-6 border border-gray-200 relative dark:bg-gray-900 dark:border-gray-700">
+        <h2 className="text-xl font-semibold mb-2 text-center dark:text-white">
+          Source-wise Income & Expense Breakdown
+        </h2>
+        <p className="text-sm text-gray-500 text-center mb-6 dark:text-gray-400">
+          Visual representation of how your money flows in and out.
+        </p>
+
+        <div className="flex flex-col md:flex-row items-center justify-around gap-8">
+          <div className="w-full md:w-1/2">
+            <h3 className="text-center font-semibold text-green-600 dark:text-green-400 mb-2">
+              Income
+            </h3>
+            <div className="h-[240px]">
+              <PieChartBreakdown data={incomeBreakdown} />
+            </div>
+          </div>
+
+          <div className="w-full md:w-1/2">
+            <h3 className="text-center font-semibold text-red-600 dark:text-red-400 mb-2">
+              Expense
+            </h3>
+            <div className="h-[240px]">
+              <PieChartBreakdown data={expenseBreakdown} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
