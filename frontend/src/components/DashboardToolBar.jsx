@@ -14,6 +14,7 @@ export const DashboardToolBar = ({
   sourceOptions = {},
   loading,
 }) => {
+  console.log(sourceOptions);
   const [searchTerm, setSearchTerm] = useState("");
   const [localFilters, setLocalFilters] = useState({
     type: "",
@@ -42,7 +43,6 @@ export const DashboardToolBar = ({
     onFilterChange(resetFilters);
   };
   useEffect(() => {
-    console.log(sourceOptions);
     const tId = setTimeout(() => {
       onSearch(searchTerm);
     }, 300);

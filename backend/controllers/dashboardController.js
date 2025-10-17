@@ -194,8 +194,8 @@ export const getDashboardData = async (req, res) => {
     ]);
 
     //sources
-    const incomeSources = await transactionModel.distinct("source",{type:"income"})
-    const expenseSources = await transactionModel.distinct("source",{type:"expense"})
+    const incomeSources = await transactionModel.distinct("source",{type:"income",userId:userId})
+    const expenseSources = await transactionModel.distinct("source",{type:"expense",userId:userId})
 
     //Goals
     //latest goal (income & expense)
