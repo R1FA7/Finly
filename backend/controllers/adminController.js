@@ -141,7 +141,9 @@ export const getAllUsersData = async (req,res)=> {
     ]);
     //Txn logs(recent)
     const recentLogs = await transactionModel.find().populate("userId","name email")
-    console.log(recentLogs)
+    //console.log(recentLogs)
+    //const logs = await transactionModel.find()
+    //console.log("LOGS",logs)
     res.status(200).json({
       success: true,
       users,

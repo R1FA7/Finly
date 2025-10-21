@@ -55,8 +55,8 @@ export const OverviewPage = () => {
         {/* Left: Transaction + Sources */}
         <div className="w-full lg:w-1/2 space-y-6">
           {/* Recent Transactions */}
-          <div className="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700 overflow-x-auto">
-            <h2 className="text-xl font-bold text-white mb-6">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 overflow-x-auto">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">
               🧾 Recent Transactions
             </h2>
             <TransactionList
@@ -66,12 +66,12 @@ export const OverviewPage = () => {
           </div>
 
           {/* Top Sources */}
-          <div className="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700">
-            <h3 className="text-xl font-bold text-white">
-              <ArrowPathRoundedSquareIcon className="w-5 h-5 inline mr-2 text-white" />
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+              <ArrowPathRoundedSquareIcon className="w-5 h-5 inline mr-2 text-gray-800 dark:text-white" />
               Top Sources
             </h3>
-            <div className="divide-y divide-gray-700 mt-4">
+            <div className="divide-y divide-gray-300 dark:divide-gray-700 mt-4">
               {adminDashboardData?.commonSources.map((source, idx) => (
                 <div
                   key={idx}
@@ -79,19 +79,23 @@ export const OverviewPage = () => {
                 >
                   {/* Source Info */}
                   <div>
-                    <p className="text-sm font-medium text-white">
+                    <p className="text-sm font-medium text-gray-800 dark:text-white">
                       {source._id.source}
                     </p>
-                    <p className="text-xs text-gray-400">{source._id.type}</p>
+                    <p className="text-xs text-gray-700 dark:text-gray-400">
+                      {source._id.type}
+                    </p>
                   </div>
 
                   {/* Amount + Count */}
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-white">
+                    <p className="text-sm font-semibold text-gray-800 dark:text-white">
                       <CurrencyBangladeshiIcon className="w-5 h-5 inline mr-1" />
                       {Number(source.totalAmount).toLocaleString()}
                     </p>
-                    <p className="text-xs text-gray-500">{source.count} txns</p>
+                    <p className="text-xs text-gray-700 dark:text-gray-500">
+                      {source.count} txns
+                    </p>
                   </div>
                 </div>
               ))}
@@ -99,8 +103,8 @@ export const OverviewPage = () => {
           </div>
         </div>
         {/* Right: Accordion Section */}
-        <div className="w-full lg:w-1/2 lg:h-fit bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
-          <h2 className="text-xl font-bold text-white mb-6">
+        <div className="w-full lg:w-1/2 lg:h-fit bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">
             🔥 What’s Trending
           </h2>
 

@@ -83,14 +83,14 @@ export const AdminPage = () => {
     );
   }
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-900">
+    <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-gray-900">
       <AdminNavbar
         navItems={navItems}
         activeTab={activeTab}
         onNavClick={(tabId) => handleNavClick(tabId)}
       />
-      <main className="flex-1 p-6 overflow-y-auto">
-        <h1 className="text-4xl font-semibold text-slate-800 mb-4 text-center gap-2 dark:bg-gray-900 dark:text-gray-100">
+      <main className="flex-1 p-6 overflow-y-auto bg-white dark:bg-gray-900">
+        <h1 className="text-4xl font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">
           {activeTab === "overview" && "Overview"}
           {activeTab === "announcements" && "Announcements"}
           {activeTab === "users" && "Users"}

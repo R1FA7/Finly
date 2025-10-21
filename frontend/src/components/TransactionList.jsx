@@ -26,13 +26,13 @@ export const TransactionList = ({
 
   //sorting
   const [sortBy, setSortBy] = useState({
-    date: "desc",
+    date: "mix",
     amount: "mix", //from low to high,vice-versa,default by date
     user: "mix", //group by user(should i do it?)
   });
 
   let sortedTransactions = [...transactions];
-
+  console.log("HI", sortedTransactions);
   sortedTransactions.sort((a, b) => {
     // First, sort by date if active
     if (sortBy.date !== "mix") {
@@ -44,8 +44,8 @@ export const TransactionList = ({
 
     // Then by user if active (and dates are equal)
     if (sortBy.user !== "mix") {
-      const userA = a.userId?.toString() || "";
-      const userB = b.userId?.toString() || "";
+      const userA = a.userId?.name?.toString() || "";
+      const userB = b.userId?.name?.toString() || "";
       const userCompare =
         sortBy.user === "asc"
           ? userA.localeCompare(userB)
@@ -114,31 +114,33 @@ export const TransactionList = ({
   return (
     <div className="flex-col space-y-5">
       {/* Sort Section */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-evenly gap-2 sm:gap-4 px-2 text-sm text-gray-300 border p-2 rounded-md">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-evenly gap-2 sm:gap-4 px-2 text-sm text-gray-700 dark:text-gray-300 border border-gray-200 shadow-md dark:border p-2 rounded-md">
         <span className="font-semibold whitespace-nowrap">Sort by:</span>
 
         <div className="flex gap-6 flex-wrap">
           {/* Date Sort */}
           <button
             onClick={() => handleSortToggle("date")}
-            className="flex items-center space-x-1 hover:text-white transition"
+            className="flex items-center space-x-1 hover:text-gray-800 dark:hover:text-white cursor-pointer transition"
             title="Click to cycle: off → ascending → descending"
           >
-            <CalendarDaysIcon className="w-5 h-5" />
+            <CalendarDaysIcon className="w-5 h-5" title="Date" />
             {sortBy.date === "asc" ? (
               <ArrowUpIcon className="w-4 h-4 text-green-400" />
-            ) : (
+            ) : sortBy.date === "desc" ? (
               <ArrowDownIcon className="w-4 h-4 text-green-400" />
+            ) : (
+              <ArrowsUpDownIcon className="w-4 h-4" />
             )}
           </button>
 
           {/* User Sort */}
           <button
             onClick={() => handleSortToggle("user")}
-            className="flex items-center space-x-1 hover:text-white transition"
+            className="flex items-center space-x-1 hover:text-gray-800 dark:hover:text-white cursor-pointer transition"
             title="Click to cycle: off → ascending → descending"
           >
-            <UserIcon className="w-5 h-5" />
+            <UserIcon className="w-5 h-5" title="User" />
             {sortBy.user === "asc" ? (
               <ArrowUpIcon className="w-4 h-4 text-green-400" />
             ) : sortBy.user === "desc" ? (
@@ -151,10 +153,10 @@ export const TransactionList = ({
           {/* Amount Sort */}
           <button
             onClick={() => handleSortToggle("amount")}
-            className="flex items-center space-x-1 hover:text-white transition"
+            className="flex items-center space-x-1 hover:text-gray-800 dark:hover:text-white cursor-pointer transition"
             title="Click to cycle: off → ascending → descending"
           >
-            <BanknotesIcon className="w-5 h-5" />
+            <BanknotesIcon className="w-5 h-5" title="Amount" />
             {sortBy.amount === "asc" ? (
               <ArrowUpIcon className="w-4 h-4 text-green-400" />
             ) : sortBy.amount === "desc" ? (
@@ -164,10 +166,7 @@ export const TransactionList = ({
             )}
           </button>
           {/* Reset Sort */}
-          <Button
-            onClick={handleReset}
-            className="text-xs px-2 py-1 bg-gray-700 rounded hover:bg-gray-600 transition"
-          >
+          <Button onClick={handleReset} className="text-xs px-2 py-1">
             Reset
           </Button>
         </div>
@@ -198,10 +197,10 @@ export const TransactionList = ({
       <div className="flex justify-center items-center space-x-2">
         {currentPage > 0 && (
           <button
-            className="border py-0.5 px-2 rounded-md cursor-pointer"
+            className="border py-0.5 px-2 rounded-md cursor-pointer text-gray-800 dark:text-white"
             onClick={handlePrevClick}
           >
-            <ChevronDoubleLeftIcon className="w-2.5 h-6" />
+            <ChevronDoubleLeftIcon className="w-2.5 h-6 text-gray-800 dark:text-white" />
           </button>
         )}
         {visiblePages.map((i) => (
@@ -209,8 +208,8 @@ export const TransactionList = ({
             key={i}
             className={`${
               i !== currentPage
-                ? "border py-0.5 px-2 rounded-md cursor-pointer font-light"
-                : "font-extrabold"
+                ? "border py-0.5 px-2 rounded-md cursor-pointer font-light dark:text-gray-200 text-gray-800"
+                : "dark:text-white text-gray-900 font-extrabold"
             }`}
             onClick={() => setCurrentPage(i)}
           >
@@ -219,10 +218,10 @@ export const TransactionList = ({
         ))}
         {currentPage < pageCount - 1 && (
           <button
-            className="border py-0.5 px-2 rounded-md cursor-pointer"
+            className="border py-0.5 px-2 rounded-md cursor-pointer text-gray-800 dark:text-white"
             onClick={handleNextClick}
           >
-            <ChevronDoubleRightIcon className="w-2.5 h-6" />
+            <ChevronDoubleRightIcon className="w-2.5 h-6 text-gray-800 dark:text-white" />
           </button>
         )}
       </div>

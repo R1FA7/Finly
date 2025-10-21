@@ -82,35 +82,35 @@ export const UsersPage = () => {
             placeholder="Search by name or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 pl-10 pr-4 py-2.5 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            className="w-full bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 pl-10 pr-4 py-2.5 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
           />
         </div>
       </div>
 
       {/* Users Table */}
-      <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg border border-gray-700">
+      <div className="bg-gray-50 dark:bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-gradient-to-r from-gray-800 to-gray-700 border-b border-gray-600">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-200">
+              <tr className="bg-gradient-to-r from-gray-100 dark:from-gray-900 to-gray-200 dark:to-gray-800 border-b border-gray-200 dark:border-gray-600">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-200">
                   Name
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-200">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-200">
                   Email
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-200">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-200">
                   Role
                 </th>
-                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-200">
+                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-gray-200">
                   Status
                 </th>
-                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-200">
+                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-gray-200">
                   Action
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-700">
+            <tbody className="divide-y divide-gray-300 dark:divide-gray-700">
               {adminDashboardData?.users
                 ?.filter(
                   (user) =>
@@ -126,22 +126,22 @@ export const UsersPage = () => {
                     key={user._id}
                     className={`transition-all duration-200 ${
                       user.role === "admin"
-                        ? "hover:bg-red-900/20"
-                        : "hover:bg-blue-900/20"
+                        ? "hover:bg-red-100 dark:hover:bg-red-900/20"
+                        : "hover:bg-blue-100 dark:hover:bg-blue-900/20"
                     }`}
                   >
                     <td className="px-6 py-4">
-                      <span className="text-white font-medium">
+                      <span className="text-gray-900 dark:text-gray-100 font-medium">
                         {user.name}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-gray-400 text-sm">
+                      <span className="text-gray-800 dark:text-gray-400 text-sm">
                         {user.email}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex gap-2 bg-gray-700 p-1 rounded-full max-w-[128px]">
+                      <div className="flex gap-2 bg-gray-200 dark:bg-gray-700 p-1 rounded-full max-w-[128px]">
                         {["user", "admin"].map((roleOption) => (
                           <button
                             key={roleOption}
@@ -156,9 +156,9 @@ export const UsersPage = () => {
                             className={`px-3 py-0.5 rounded-full text-xs font-medium transition-colors duration-200 ${
                               user.role === roleOption
                                 ? roleOption === "admin"
-                                  ? "bg-red-500 text-white"
-                                  : "bg-blue-500 text-white"
-                                : "text-gray-300 hover:bg-gray-600"
+                                  ? "bg-red-600 text-white"
+                                  : "bg-blue-600 text-white"
+                                : "text-gray-900 dark:text-gray-300 hover:bg-gray-600 dark:hover:bg-gray-600"
                             }`}
                           >
                             {roleOption.charAt(0).toUpperCase() +
@@ -172,7 +172,7 @@ export const UsersPage = () => {
                       {user.isAccountVerified ? (
                         <div className="flex justify-center">
                           <CheckBadgeIcon
-                            className="text-cyan-300 h-8 w-8"
+                            className="text-cyan-300 dark:text-cyan-400 h-8 w-8"
                             title="verified"
                           />
                         </div>
@@ -192,13 +192,10 @@ export const UsersPage = () => {
                           setActionType("delete");
                           setIsDialogOpen(true);
                         }}
-                        className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-red-200/10 text-red-400 hover:bg-red-500/30 transition-colors duration-150"
+                        className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-red-200/10 text-red-500 hover:bg-red-500/30 transition-colors duration-150"
                         title="Delete user"
                       >
-                        <TrashIcon
-                          className="w-6 h-6"
-                          style={{ color: "red" }}
-                        />
+                        <TrashIcon className="w-6 h-6" />
                       </button>
                     </td>
                   </tr>
@@ -223,13 +220,19 @@ export const UsersPage = () => {
           }
           description={
             actionType === "delete" ? (
-              "This will permanently delete the user."
+              <>
+                This will permanently{" "}
+                <span className="font-bold text-red-600">delete </span>
+                the user
+              </>
             ) : (
               <>
                 This will change the user's role to{" "}
                 <span
-                  className={`font-semibold ${
-                    newRole === "admin" ? "text-red-600" : "text-blue-400"
+                  className={`font-bold ${
+                    newRole === "admin"
+                      ? "text-red-600"
+                      : "text-blue-700 dark:text-blue-400"
                   }`}
                 >
                   {newRole}
@@ -247,7 +250,7 @@ export const UsersPage = () => {
             user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             user.email?.toLowerCase().includes(searchQuery.toLowerCase())
         ) && (
-          <div className="p-8 text-center text-gray-400">
+          <div className="p-8 text-center text-gray-500 dark:text-gray-500">
             <p>No users found matching your search.</p>
           </div>
         )}

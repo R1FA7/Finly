@@ -1,5 +1,6 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { ButtonLoader } from "../../../components/loaders/ButtonLoader";
+
 export const AnnoucementForm = ({
   messageForm,
   setMessageForm,
@@ -10,24 +11,23 @@ export const AnnoucementForm = ({
   loading,
 }) => {
   return (
-    <>
+    <div className="space-y-5">
       {/* Title */}
       <input
         type="text"
         placeholder="Message Title (optional)"
         value={messageForm.title}
         onChange={(e) =>
-          setMessageForm({
-            ...messageForm,
-            title: e.target.value,
-          })
+          setMessageForm({ ...messageForm, title: e.target.value })
         }
-        className="w-full bg-gray-700 border border-gray-600 px-4 py-2 rounded-lg text-white mt-4 focus:outline-none focus:border-blue-500"
+        className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-lg text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
       {/* Priority Selection */}
-      <div className="mt-4">
-        <label className="text-sm text-gray-300 block mb-2">Priority</label>
+      <div>
+        <label className="text-sm text-gray-700 dark:text-gray-300 block mb-2">
+          Priority
+        </label>
         <div className="flex gap-3">
           {["low", "medium", "high"].map((level) => (
             <label
@@ -40,22 +40,19 @@ export const AnnoucementForm = ({
                 value={level}
                 checked={messageForm.priority === level}
                 onChange={(e) =>
-                  setMessageForm({
-                    ...messageForm,
-                    priority: e.target.value,
-                  })
+                  setMessageForm({ ...messageForm, priority: e.target.value })
                 }
-                className="w-4 h-4"
+                className="w-4 h-4 accent-blue-500"
               />
               <span
-                className={`text-sm px-3 py-1 rounded-full ${
+                className={`text-sm px-3 py-1 rounded-full transition ${
                   messageForm.priority === level
                     ? level === "high"
-                      ? "bg-red-500/30 text-red-300"
+                      ? "bg-red-100 text-red-600 dark:bg-red-500/30 dark:text-red-300"
                       : level === "medium"
-                      ? "bg-yellow-500/30 text-yellow-300"
-                      : "bg-green-500/30 text-green-300"
-                    : "text-gray-400"
+                      ? "bg-yellow-100 text-yellow-600 dark:bg-yellow-500/30 dark:text-yellow-300"
+                      : "bg-green-100 text-green-600 dark:bg-green-500/30 dark:text-green-300"
+                    : "text-gray-600 dark:text-gray-400"
                 }`}
               >
                 {level.charAt(0).toUpperCase() + level.slice(1)}
@@ -65,64 +62,56 @@ export const AnnoucementForm = ({
         </div>
       </div>
 
-      {/* Target User Type Selection */}
-      <div className="mt-4">
-        <label className="text-sm text-gray-300 block mb-2">Send To</label>
-        <div className="flex">
-          <label className="flex items-center gap-2 text-gray-300 cursor-pointer hover:bg-gray-700/50 px-3 py-2 rounded-lg">
-            <input
-              type="radio"
-              name="targetType"
-              value="all"
-              checked={messageForm.targetType === "all"}
-              onChange={(e) =>
-                setMessageForm({
-                  ...messageForm,
-                  targetType: e.target.value,
-                  targetUsers: [],
-                })
-              }
-              className="w-4 h-4"
-            />
-            <span className="text-sm">All Users</span>
-          </label>
-
-          <label className="flex items-center gap-2 text-gray-300 cursor-pointer hover:bg-gray-700/50 px-3 py-2 rounded-lg">
-            <input
-              type="radio"
-              name="targetType"
-              value="specific"
-              checked={messageForm.targetType === "specific"}
-              onChange={(e) =>
-                setMessageForm({
-                  ...messageForm,
-                  targetType: e.target.value,
-                })
-              }
-              className="w-4 h-4"
-            />
-            <span className="text-sm">Specific Users</span>
-          </label>
+      {/* Target Type */}
+      <div>
+        <label className="text-sm text-gray-700 dark:text-gray-300 block mb-2">
+          Send To
+        </label>
+        <div className="flex gap-4">
+          {["all", "specific"].map((type) => (
+            <label
+              key={type}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition"
+            >
+              <input
+                type="radio"
+                name="targetType"
+                value={type}
+                checked={messageForm.targetType === type}
+                onChange={(e) =>
+                  setMessageForm({
+                    ...messageForm,
+                    targetType: e.target.value,
+                    ...(e.target.value === "all" ? { targetUsers: [] } : {}),
+                  })
+                }
+                className="w-4 h-4 accent-blue-500"
+              />
+              <span className="text-sm capitalize text-gray-800 dark:text-gray-200">
+                {type} Users
+              </span>
+            </label>
+          ))}
         </div>
       </div>
 
-      {/* Multi-User Selection */}
+      {/* Specific User Selector */}
       {messageForm.targetType === "specific" && (
-        <div className="mt-3 space-y-2 relative">
-          {/* Search Input */}
-          <div className="flex-1 relative">
+        <div className="space-y-2">
+          {/* Search */}
+          <div className="relative">
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
               placeholder="Search by name or email..."
               value={userSearch}
               onChange={(e) => setUserSearch(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 pl-10 pr-4 py-2.5 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 pl-10 pr-4 py-2.5 rounded-lg text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* Filtered user list with checkboxes */}
-          <div className="max-h-60 overflow-y-auto border border-gray-600 rounded-lg p-2 bg-gray-800">
+          {/* Filtered users list */}
+          <div className="max-h-60 overflow-y-auto border border-gray-300 dark:border-gray-700 rounded-lg p-2 bg-white dark:bg-gray-800">
             {adminDashboardData?.users
               .filter(
                 (user) =>
@@ -132,7 +121,7 @@ export const AnnoucementForm = ({
               .map((user) => (
                 <label
                   key={user._id}
-                  className="flex items-center gap-2 text-white text-sm cursor-pointer hover:bg-gray-700 px-2 py-1 rounded"
+                  className="flex items-center gap-2 text-sm text-gray-800 dark:text-white cursor-pointer px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                 >
                   <input
                     type="checkbox"
@@ -156,7 +145,7 @@ export const AnnoucementForm = ({
               ))}
           </div>
 
-          {/* Selected users summary */}
+          {/* Selected user badges */}
           {messageForm.targetUsers.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-2">
               {messageForm.targetUsers.map((userId) => {
@@ -166,7 +155,7 @@ export const AnnoucementForm = ({
                 return (
                   <span
                     key={userId}
-                    className="bg-blue-500/30 text-blue-300 px-2 py-1 rounded text-xs flex items-center gap-1"
+                    className="bg-blue-100 text-blue-700 dark:bg-blue-500/30 dark:text-blue-200 px-2 py-1 rounded text-xs flex items-center gap-1"
                   >
                     {user?.name}
                     <button
@@ -178,7 +167,7 @@ export const AnnoucementForm = ({
                           ),
                         })
                       }
-                      className="hover:text-blue-200 cursor-pointer"
+                      className="hover:text-red-500 ml-1"
                     >
                       ✕
                     </button>
@@ -191,8 +180,8 @@ export const AnnoucementForm = ({
       )}
 
       {/* Expiry Date */}
-      <div className="mt-4">
-        <label className="text-sm text-gray-300 block mb-2">
+      <div>
+        <label className="text-sm text-gray-700 dark:text-gray-300 block mb-2">
           Expires At (optional)
         </label>
         <input
@@ -204,18 +193,20 @@ export const AnnoucementForm = ({
               expiresAt: e.target.value,
             })
           }
-          className="w-full bg-gray-700 border border-gray-600 px-4 py-2 rounded-lg text-white focus:outline-none focus:border-blue-500"
+          className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-lg text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
-      {/* Send Button */}
-      <button
-        onClick={handleSendMessage}
-        className="float-right mt-5 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition"
-        disabled={loading.postBtn}
-      >
-        {loading.postBtn ? <ButtonLoader text="Posting" /> : "Post"}
-      </button>
-    </>
+      {/* Post Button */}
+      <div className="text-right">
+        <button
+          onClick={handleSendMessage}
+          disabled={loading.postBtn}
+          className="mt-5 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {loading.postBtn ? <ButtonLoader text="Posting" /> : "Post"}
+        </button>
+      </div>
+    </div>
   );
 };

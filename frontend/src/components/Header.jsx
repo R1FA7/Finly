@@ -1,5 +1,5 @@
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AppContext } from "../context/AppContext";
@@ -23,6 +23,21 @@ const Header = () => {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  //for closing by clicking anywhere in the screen
+
+  const mobileMenuRef = useRef(null);
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        isMobileMenuOpen &&
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target)
+      )
+        setIsMobileMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [isMobileMenuOpen]);
 
   const handleLogOut = async () => {
     try {
@@ -66,7 +81,7 @@ const Header = () => {
 
         {/* Desktop Nav */}
         {isLoggedIn && (
-          <nav className="hidden md:flex items-center gap-8 text-gray-700 dark:text-gray-200 font-medium">
+          <nav className="hidden md:flex items-center gap-5 lg:gap-8 text-gray-700 dark:text-gray-200 font-medium">
             {commonLinks.map(({ name, path }) => (
               <NavLink
                 key={path}
@@ -100,7 +115,18 @@ const Header = () => {
                   }`
                 }
               >
-                Admin
+                {({ isActive }) => (
+                  <>
+                    Admin
+                    <span
+                      className={`absolute left-0 -bottom-1 w-full h-0.5 bg-blue-600 transition-transform duration-300 origin-left ${
+                        isActive
+                          ? "scale-x-100"
+                          : "scale-x-0 group-hover:scale-x-100"
+                      }`}
+                    ></span>
+                  </>
+                )}
               </NavLink>
             </CanAccess>
           </nav>
@@ -150,7 +176,10 @@ const Header = () => {
 
       {/* Mobile Nav */}
       {isLoggedIn && isMobileMenuOpen && (
-        <div className="md:hidden mt-2 bg-white dark:bg-gray-900 p-4 absolute right-4 top-20 z-50 w-48 shadow-xl rounded-lg">
+        <div
+          className="md:hidden mt-2 bg-white dark:bg-gray-900 p-4 absolute right-4 top-20 z-50 w-48 shadow-xl rounded-lg"
+          ref={mobileMenuRef}
+        >
           <ul className="flex flex-col gap-2">
             {commonLinks.map(({ name, path }) => (
               <li key={name}>
