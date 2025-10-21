@@ -6,6 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { Button } from "./Button";
+import { ButtonLoader } from "./loaders/ButtonLoader";
 
 export const DashboardToolBar = ({
   onSearch,
@@ -65,9 +66,13 @@ export const DashboardToolBar = ({
       </div>
       <div className="flex w-full md:w-auto justify-between md:justify-start gap-3">
         {/* Download  */}
-        <Button onClick={onDownload} disabled={loading}>
+        <Button onClick={onDownload} disabled={loading.downloadTxns}>
           <ArrowDownTrayIcon className="w-5 h-5" />
-          {loading ? "Downloading..." : "Download"}
+          {loading.downloadTxns ? (
+            <ButtonLoader text="Downloading" />
+          ) : (
+            "Download"
+          )}
         </Button>
         {/* Filter Popover */}
         <Popover className="relative">
@@ -76,7 +81,11 @@ export const DashboardToolBar = ({
           dark:bg-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-800"
           >
             <AdjustmentsHorizontalIcon className="w-5 h-5" />
-            Filter
+            {loading.filteredTxns ? (
+              <ButtonLoader text="Filtering" />
+            ) : (
+              "Filter"
+            )}
           </PopoverButton>
           <PopoverPanel className="absolute left-auto right-0 z-20 mt-2 w-80 bg-white dark:bg-gray-900  border border-gray-200 rounded-md shadow-lg p-4 space-y-4">
             <div className="flex text-sm items-center gap-2">

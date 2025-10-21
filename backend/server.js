@@ -3,6 +3,7 @@ import cors from "cors"
 import "dotenv/config"
 import express from "express"
 import connectDB from "./config/mongodb.js"
+import adminRouter from "./routes/adminRoutes.js"
 import authRouter from "./routes/authRoutes.js"
 import dashboardRouter from "./routes/dashboardRoutes.js"
 import goalRouter from "./routes/goalRoutes.js"
@@ -30,7 +31,7 @@ app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/transaction', transactionRouter)
 app.use('/api/v1/dashboard', dashboardRouter)
 app.use('/api/v1/goal', goalRouter)
-
+app.use('/api/v1/admin',adminRouter)
 app.listen(port, ()=>{
   console.log(`server started in Port ${port}`)
 })

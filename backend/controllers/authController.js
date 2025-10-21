@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import transporter from '../config/nodemailer.js'
+import { getPermissionsForRole } from '../lib/permissions.js'
 import userModel from '../models/userModel.js'
 import { loginSchema, registerSchema } from '../validation/authValidation.js'
 
@@ -19,23 +20,26 @@ export async function register(req,res){
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
+    const role="user"
     const user = await userModel.create({
       name,
       email,
-      password:hashedPassword
+      password:hashedPassword,
+      role
     })
 
     const access_token = jwt.sign(
-      {id:user._id},
+      {id:user._id, role: user.role},
       process.env.JWT_SECRET,
       {expiresIn:'15m'}
     );
 
     const refresh_token = jwt.sign(
-      {id:user._id},
+      {id:user._id, role: user.role},
       process.env.JWT_REFRESH_SECRET,
       {expiresIn:'7d'}
     )
+    const permissions = getPermissionsForRole(user)
 
     res.cookie('refreshToken', refresh_token, {
       httpOnly: true,
@@ -62,6 +66,7 @@ export async function register(req,res){
       success: true,
       message : 'User registered successfully',
       user,
+      permissions,
       access_token,
     })
 
@@ -95,13 +100,13 @@ export async function login(req,res){
       })
     }
     const access_token = jwt.sign(
-      { id: user._id },
+      { id: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1m' }
     );
 
     const refresh_token = jwt.sign(
-      { id: user._id },
+      { id: user._id, role: user.role },
       process.env.JWT_REFRESH_SECRET,
       { expiresIn: '7d' }
     );
@@ -113,11 +118,13 @@ export async function login(req,res){
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
+    const permissions = getPermissionsForRole(user.role)
 
     return res.status(200).json({
       success: true,
       message: 'Login successful',
       user,
+      permissions,
       access_token,
     });
   } catch (error) {
@@ -158,7 +165,7 @@ export async function renewAccessToken(req,res){
   try {
     console.log(req?.user?.id)
     const access_token = jwt.sign(
-      {id: req?.user?.id},
+      {id: req?.user?.id, role: req?.user?.role},
       process.env.JWT_SECRET,
       {expiresIn:'15m'}
     );
@@ -176,8 +183,9 @@ export const getUserInfo = async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
+    const permissions = getPermissionsForRole(user.role)
 
-    res.status(200).json({ success: true, user });
+    res.status(200).json({ success: true, user, permissions });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

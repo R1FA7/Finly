@@ -13,7 +13,7 @@ export const TransactionCard = ({
   onDelete,
   callFrom,
 }) => {
-  const { _id, type, source, amount, date } = transaction;
+  const { _id, userId, type, source, amount, date } = transaction;
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex justify-between items-center hover:shadow-md transition duration-200 mx-auto w-3/4 relative dark:bg-gray-900 dark:text-gray-100">
@@ -38,7 +38,7 @@ export const TransactionCard = ({
       </div>
 
       <div className="flex flex-col items-end justify-between space-y-2">
-        {callFrom !== "dashboard" ? (
+        {callFrom === "incomePage" ? (
           <div className="flex space-x-4 text-sm">
             <button
               onClick={() => onEdit?.(transaction)}
@@ -57,7 +57,7 @@ export const TransactionCard = ({
               <span>Delete</span>
             </button>
           </div>
-        ) : (
+        ) : callFrom === "dashboard" ? (
           <Link
             to={`/${type}`}
             className="text-sm text-blue-600 hover:text-blue-800 transition
@@ -66,6 +66,10 @@ export const TransactionCard = ({
             <Cog6ToothIcon className="w-5 h-5" />
             Actions
           </Link>
+        ) : (
+          <h3 className="text-md font-semibold text-gray-800 dark:text-gray-100">
+            {userId?.name}
+          </h3>
         )}
 
         <div className="text-right">

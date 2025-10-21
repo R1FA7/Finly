@@ -17,7 +17,7 @@ export const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const { setIsLoggedIn, updateUser } = useContext(AppContext);
+  const { setIsLoggedIn, updateUser, setPermissions } = useContext(AppContext);
   const { btnLoadingMap, withBtnLoading } = useButtonLoader();
 
   const onSubmitHandler = async (e) => {
@@ -38,6 +38,7 @@ export const LoginPage = () => {
           localStorage.setItem("access_token", res.data.access_token);
           setIsLoggedIn(true);
           updateUser(res.data.user);
+          setPermissions(res.data.permissions);
           navigate("/home");
         } else {
           toast.error(res.data.message);

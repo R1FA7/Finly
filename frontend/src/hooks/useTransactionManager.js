@@ -186,9 +186,9 @@ export const useTransactionManager =
       );
       if (res.data.success) {
         await fetchTransactions();
-        toast.success(res.data.message);
         setShowConfirmModal(false)
         setSelectedTxnId(null)
+        toast.success(res.data.message);
       }
     } catch (err) {
       console.error(`Error deleting ${transactionType}`, err);

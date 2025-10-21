@@ -10,11 +10,11 @@ import userAuth from "../middleware/userAuth.js";
 
 const transactionRouter=express.Router()
 
-transactionRouter.get("/downloadexcel", userAuth, downloadTransactionExcel);
-transactionRouter.get("/", userAuth, getAllTransactions);
-transactionRouter.post("/", userAuth, addTransaction);
-transactionRouter.put("/:id", userAuth, updateTransaction);
-transactionRouter.delete("/:id", userAuth, deleteTransaction);
+transactionRouter.get("/downloadexcel", userAuth("transaction.download"), downloadTransactionExcel);
+transactionRouter.get("/", userAuth("transaction.view"), getAllTransactions);
+transactionRouter.post("/", userAuth("transaction.create"), addTransaction);
+transactionRouter.put("/:id", userAuth("transaction.edit"), updateTransaction);
+transactionRouter.delete("/:id", userAuth("transaction.delete"), deleteTransaction);
 
 
 export default transactionRouter

@@ -4,6 +4,6 @@ import userAuth from "../middleware/userAuth.js"
 
 const dashboardRouter = express.Router() 
 
-dashboardRouter.get("/",userAuth, getDashboardData)
+dashboardRouter.get("/",userAuth('dashboard.view'), getDashboardData)
 
 export default dashboardRouter

@@ -10,10 +10,10 @@ import {
   YAxis,
 } from "recharts";
 
-const LineBreakDownChartComponent = ({ data }) => {
+const LineBreakDownChartComponent = ({ data, height = 200 }) => {
   return (
     <div>
-      <ResponsiveContainer width="100%" height={200}>
+      <ResponsiveContainer width="100%" height={height}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="period" />

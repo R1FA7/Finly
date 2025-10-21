@@ -4,6 +4,6 @@ import userAuth from "../middleware/userAuth.js";
 
 const goalRouter = express.Router()
 
-goalRouter.post("/", userAuth, createGoal)
+goalRouter.post("/", userAuth('goal.manage'), createGoal)
 
 export default goalRouter

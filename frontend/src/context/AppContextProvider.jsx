@@ -8,6 +8,7 @@ export const AppContextProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [permissions, setPermissions] = useState([]);
 
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "dark";
@@ -35,11 +36,13 @@ export const AppContextProvider = (props) => {
       const res = await axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO);
       if (res.data.success) {
         setUser(res.data.user);
+        setPermissions(res.data.permissions);
         setIsLoggedIn(true);
       }
     } catch (error) {
       console.log("Failed to fetch user info:", error);
       setIsLoggedIn(false);
+      setPermissions([]);
       setUser(null);
     } finally {
       setLoading(false);
@@ -69,6 +72,8 @@ export const AppContextProvider = (props) => {
     loading,
     theme,
     toggleTheme,
+    permissions,
+    setPermissions,
   };
   return (
     <AppContext.Provider value={value}>

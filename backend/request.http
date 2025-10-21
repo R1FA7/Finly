@@ -1,10 +1,10 @@
 ### LOGIN
-POST http://localhost:3000/api/auth/login
+POST http://localhost:3000/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "email": "minhazulkabir510@gmail.com",
-  "password": "123465"
+  "email": "aa@gmail.com",
+  "password": "123456"
 }
 
 ### CREATE INCOME

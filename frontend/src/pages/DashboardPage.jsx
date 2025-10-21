@@ -48,14 +48,16 @@ export const DashboardPage = () => {
   };
 
   const fetchFilteredTxns = async (params = {}) => {
-    try {
-      const res = await axiosInstance.get(API_PATHS.DASHBOARD.GET_DATA, {
-        params,
-      });
-      setFilteredTxns(res?.data?.data?.searchFilteredTxns || []);
-    } catch (err) {
-      console.error("Failed to fetch filtered transactions", err);
-    }
+    withBtnLoading("filterTxns", async () => {
+      try {
+        const res = await axiosInstance.get(API_PATHS.DASHBOARD.GET_DATA, {
+          params,
+        });
+        setFilteredTxns(res?.data?.data?.searchFilteredTxns || []);
+      } catch (err) {
+        console.error("Failed to fetch filtered transactions", err);
+      }
+    });
   };
 
   useEffect(() => {
@@ -328,7 +330,7 @@ export const DashboardPage = () => {
               ...(dashboardStats?.expenseSources || []),
             ],
           }}
-          loading={btnLoadingMap.downloadTxns}
+          loading={btnLoadingMap}
         />
         <TransactionList
           transactions={filteredTxns}

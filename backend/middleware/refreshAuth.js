@@ -20,7 +20,7 @@ const refreshAuth = (req, res, next) => {
       });
     }
 
-    req.user = { id: decoded.id };
+    req.user = { id: decoded.id, role: decoded.role };
     next();
 
   } catch (error) {

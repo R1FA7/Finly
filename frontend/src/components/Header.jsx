@@ -7,11 +7,20 @@ import { API_PATHS } from "../utils/apiPaths";
 import axiosInstance from "../utils/axiosInstance";
 import { LOGO_URL } from "../utils/constants";
 import { AnimatedName } from "./AnimatedName";
+import CanAccess from "./CanAccess";
 import { ProfileMenu } from "./ProfileMenu";
 
 const Header = () => {
-  const { isLoggedIn, setIsLoggedIn, updateUser, user, theme, toggleTheme } =
-    useContext(AppContext);
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    updateUser,
+    user,
+    theme,
+    toggleTheme,
+    setPermissions,
+  } = useContext(AppContext);
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -23,6 +32,7 @@ const Header = () => {
       localStorage.removeItem("access_token");
       setIsLoggedIn(false);
       updateUser(null);
+      setPermissions([]);
       toast.success("Logged out Successfully");
       navigate("/");
     } catch (error) {
@@ -31,26 +41,12 @@ const Header = () => {
     }
   };
 
-  const mobileNavLinks = (
-    <>
-      {[
-        { name: "Home", path: "/" },
-        { name: "Income", path: "/income" },
-        { name: "Expense", path: "/expense" },
-        { name: "Dashboard", path: "/dashboard" },
-      ].map(({ name, path }) => (
-        <li key={name}>
-          <Link
-            to={path}
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center px-4 py-2 rounded-md text-gray-700 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
-          >
-            {name}
-          </Link>
-        </li>
-      ))}
-    </>
-  );
+  const commonLinks = [
+    { name: "Home", path: "/home" },
+    { name: "Income", path: "/income" },
+    { name: "Expense", path: "/expense" },
+    { name: "Dashboard", path: "/dashboard" },
+  ];
 
   return (
     <header className="w-full bg-white dark:bg-slate-800 shadow-lg px-4 py-3 transition-colors">
@@ -69,14 +65,9 @@ const Header = () => {
         </div>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8 text-gray-700 dark:text-gray-200 font-medium">
-          {isLoggedIn &&
-            [
-              { name: "Home", path: "/home" },
-              { name: "Income", path: "/income" },
-              { name: "Expense", path: "/expense" },
-              { name: "Dashboard", path: "/dashboard" },
-            ].map(({ name, path }) => (
+        {isLoggedIn && (
+          <nav className="hidden md:flex items-center gap-8 text-gray-700 dark:text-gray-200 font-medium">
+            {commonLinks.map(({ name, path }) => (
               <NavLink
                 key={path}
                 to={path}
@@ -100,11 +91,23 @@ const Header = () => {
                 )}
               </NavLink>
             ))}
-        </nav>
+            <CanAccess permission="adminDashboard.view">
+              <NavLink
+                to="/admin"
+                className={({ isActive }) =>
+                  `relative group px-2 py-1 font-semibold transition-colors duration-200 ${
+                    isActive ? "text-blue-600" : "hover:text-blue-600"
+                  }`
+                }
+              >
+                Admin
+              </NavLink>
+            </CanAccess>
+          </nav>
+        )}
 
         {/* Right Section */}
         <div className="flex items-center gap-3">
-          {/* Theme Toggle */}
           {isLoggedIn && (
             <button
               onClick={toggleTheme}
@@ -119,7 +122,7 @@ const Header = () => {
             </button>
           )}
 
-          {/* Burger Menu */}
+          {/* Mobile menu button */}
           {isLoggedIn && (
             <button
               className="md:hidden text-3xl text-gray-700 dark:text-gray-100 focus:outline-none"
@@ -130,7 +133,7 @@ const Header = () => {
             </button>
           )}
 
-          {/* Profile or Register */}
+          {/* Profile/Login */}
           {isLoggedIn ? (
             <ProfileMenu user={user} onLogout={handleLogOut} />
           ) : (
@@ -145,10 +148,33 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Dropdown */}
+      {/* Mobile Nav */}
       {isLoggedIn && isMobileMenuOpen && (
         <div className="md:hidden mt-2 bg-white dark:bg-gray-900 p-4 absolute right-4 top-20 z-50 w-48 shadow-xl rounded-lg">
-          <ul className="flex flex-col gap-2">{mobileNavLinks}</ul>
+          <ul className="flex flex-col gap-2">
+            {commonLinks.map(({ name, path }) => (
+              <li key={name}>
+                <Link
+                  to={path}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center px-4 py-2 rounded-md text-gray-700 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+                >
+                  {name}
+                </Link>
+              </li>
+            ))}
+            <CanAccess permission="adminDashboard.view">
+              <li>
+                <Link
+                  to="/admin"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center px-4 py-2 rounded-md text-gray-700 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+                >
+                  Admin
+                </Link>
+              </li>
+            </CanAccess>
+          </ul>
         </div>
       )}
     </header>

@@ -30,5 +30,15 @@ export const API_PATHS = {
     DELETE: (id) =>`${BASE_API}/transaction/${id}`,
 
     DOWNLOAD_EXCEL: (type) =>`${BASE_API}/transaction/downloadexcel?type=${type}`
+  },
+  ADMIN: {
+    GET_ALL:`${BASE_API}/admin`,
+    DELETE: (id) => `${BASE_API}/admin/${id}`,
+    UPDATE: (id) => `${BASE_API}/admin/${id}`,
+    
+    SEND_MESSAGE: `${BASE_API}/admin/messages`,
+    GET_ADMIN_MSG: `${BASE_API}/admin/messages`,
+    DELETE_MSG: (id) => `${BASE_API}/admin/messages/${id}`,
+    DEACTIVATE_MSG: (id) => `${BASE_API}/admin/messages/${id}`,
   }
 }
