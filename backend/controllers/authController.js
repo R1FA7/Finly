@@ -1,7 +1,9 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose'
 import transporter from '../config/nodemailer.js'
 import { getPermissionsForRole } from '../lib/permissions.js'
+import messageModel from '../models/messageModel.js'
 import userModel from '../models/userModel.js'
 import { loginSchema, registerSchema } from '../validation/authValidation.js'
 
@@ -213,6 +215,91 @@ export async function logout(req,res){
     })
   }
 }
+
+export const extractMessages = async (req, res) => {
+  try {
+    const userId = req?.user?.id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    //user's dismissedMessages
+    const user = await userModel.findById(userId).select("dismissedMessages");
+    const dismissed = Array.isArray(user?.dismissedMessages) ? user.dismissedMessages : [];
+    const dismissedObjectIds = dismissed
+      .filter(Boolean)
+      .map((id) => (id instanceof mongoose.Types.ObjectId ? id : new mongoose.Types.ObjectId(id)));
+
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+    const messages = await messageModel.aggregate([
+      {
+        $match: {
+          // messages targeted to this user
+          $and: [
+            { isActive: true },
+            //{ expiresAt: { $gte: new Date() } },
+            { _id: { $nin: dismissedObjectIds } },
+            { targetUsers: { $in: [userObjectId] } }
+          ],
+        },
+      },
+      {
+        $addFields: {
+          priorityOrder: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$priority", "low"] }, then: 1 },
+                { case: { $eq: ["$priority", "medium"] }, then: 2 },
+                { case: { $eq: ["$priority", "high"] }, then: 3 },
+              ],
+              default: 4,
+            },
+          },
+        },
+      },
+      { $sort: { priorityOrder: -1, createdAt: -1 } }, 
+    ]);
+    return res.status(200).json({ success: true, data: messages, message: "Messages fetched successfully" });
+  } catch (err) {
+    console.error("Extract message error:", err);
+    return res.status(500).json({ success: false, error: "Failed to extract announcements", detail: err.message });
+  }
+};
+
+export async function dismissMessage(req, res) {
+  try {
+    const userId = req.user?.id;
+    const { msgId } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+    if (!msgId) {
+      return res.status(400).json({ success: false, message: "msgId is required" });
+    }
+
+    // ensure msgId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(msgId)) {
+      return res.status(400).json({ success: false, message: "Invalid msgId" });
+    }
+
+    const msgObjectId = new mongoose.Types.ObjectId(msgId);
+
+    await userModel.findByIdAndUpdate(userId, {
+      $addToSet: { dismissedMessages: msgObjectId },
+    });
+
+    return res.status(200).json({ success: true, message: "Message dismissed" });
+  } catch (error) {
+    console.error("dismissMessage error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to dismiss message",
+      detail: error.message,
+    });
+  }
+}
+
 
 export async function sendVerifyOtp(req, res) {
   try {

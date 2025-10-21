@@ -198,7 +198,7 @@ export const DashboardPage = () => {
   }
 
   return (
-    <div className="dark:bg-gray-900 dark:text-gray-100">
+    <>
       <div className="m-2">
         <h1 className="text-4xl font-bold text-slate-800 mb-2 text-center gap-2 dark:bg-gray-900 dark:text-gray-100">
           Dashboard
@@ -375,6 +375,6 @@ export const DashboardPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };

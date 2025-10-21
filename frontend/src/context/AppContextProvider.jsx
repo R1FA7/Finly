@@ -9,6 +9,7 @@ export const AppContextProvider = (props) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [permissions, setPermissions] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
 
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "dark";
@@ -33,17 +34,22 @@ export const AppContextProvider = (props) => {
   //api call
   const getUserData = async () => {
     try {
-      const res = await axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO);
-      if (res.data.success) {
-        setUser(res.data.user);
-        setPermissions(res.data.permissions);
+      const [userRes, msgRes] = await Promise.all([
+        axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO),
+        axiosInstance.get(API_PATHS.AUTH.EXTRACT_MSG),
+      ]);
+      if (userRes.data.success) {
+        setUser(userRes.data.user);
+        setPermissions(userRes.data.permissions);
         setIsLoggedIn(true);
       }
+      if (msgRes.data.success) setAnnouncements(msgRes?.data?.data);
     } catch (error) {
       console.log("Failed to fetch user info:", error);
       setIsLoggedIn(false);
       setPermissions([]);
       setUser(null);
+      setAnnouncements([]);
     } finally {
       setLoading(false);
     }
@@ -74,6 +80,8 @@ export const AppContextProvider = (props) => {
     toggleTheme,
     permissions,
     setPermissions,
+    announcements,
+    setAnnouncements,
   };
   return (
     <AppContext.Provider value={value}>

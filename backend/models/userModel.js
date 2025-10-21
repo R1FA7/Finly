@@ -38,7 +38,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['user','admin'],
     default: 'user'
-  }
+  },
+  dismissedMessages: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "message"
+    }
+  ]
 })
 
 const userModel  = mongoose.models.user || mongoose.model('user',userSchema)

@@ -50,7 +50,7 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 text-center bg-gray-100 dark:bg-gray-900 transition-colors">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-135px)] px-4 text-center">
       <div className="bg-white dark:bg-slate-950 text-gray-800 dark:text-gray-100 rounded-lg w-full max-w-md p-8 shadow-xl transition-colors">
         <h2 className="text-2xl font-bold mb-6">
           {register ? "Create Account" : "Login"}

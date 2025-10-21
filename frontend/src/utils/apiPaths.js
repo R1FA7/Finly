@@ -12,7 +12,9 @@ export const API_PATHS = {
     VERIFY_OTP: `${BASE_API}/auth/verify-reset-otp`,
     RESET_PASSWORD: `${BASE_API}/auth/reset-password`,
     VERIFY_ACCOUNT: `${BASE_API}/auth/verify-account`,
-    ACCOUNT_VERIFICATION_OTP:`${BASE_API}/auth/send-verify-otp`
+    ACCOUNT_VERIFICATION_OTP:`${BASE_API}/auth/send-verify-otp`,
+    EXTRACT_MSG:`${BASE_API}/auth`,
+    DISMISS_MSG:`${BASE_API}/auth`,
   },
   DASHBOARD:{
     GET_DATA: `${BASE_API}/dashboard`,

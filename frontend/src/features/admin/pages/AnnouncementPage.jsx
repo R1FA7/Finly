@@ -1,7 +1,8 @@
 import { MegaphoneIcon, UserIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
+import { AppContext } from "../../../context/AppContext";
 import { useButtonLoader } from "../../../hooks/useButtonLoader";
 import { API_PATHS } from "../../../utils/apiPaths";
 import axiosInstance from "../../../utils/axiosInstance";
@@ -11,6 +12,7 @@ import { AnnouncementCard } from "../components/AnnouncementCard";
 export const AnnouncementPage = () => {
   const { adminDashboardData, user, adminMessages, fetchAdminMessages } =
     useOutletContext();
+  const { setAnnouncements } = useContext(AppContext);
   const [showMessageForm, setShowMessageForm] = useState(false);
   const [messageForm, setMessageForm] = useState({
     title: "",
@@ -70,6 +72,7 @@ export const AnnouncementPage = () => {
             expiresAt: "",
           });
           setShowMessageForm(false);
+          setAnnouncements((prev = []) => [payload, ...prev]);
           await fetchAdminMessages();
         }
       } catch (error) {
@@ -141,7 +144,7 @@ export const AnnouncementPage = () => {
                   content: e.target.value,
                 });
               }}
-              className="w-full bg-transparent text-2xl text-white placeholder-gray-500 placeholder:whitespace-normal placeholder:text-base sm:placeholder:text-2xl focus:outline-none resize-none"
+              className="w-full bg-transparent text-2xl text-gray-900 dark:text-white placeholder-gray-500 placeholder:whitespace-normal placeholder:text-base sm:placeholder:text-2xl focus:outline-none resize-none"
               rows={showMessageForm ? 3 : 1}
             />
 

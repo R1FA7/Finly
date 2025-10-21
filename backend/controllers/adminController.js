@@ -1,3 +1,4 @@
+import goalModel from "../models/goalModel.js";
 import transactionModel from "../models/transactionModel.js";
 import userModel from "../models/userModel.js";
 const extractDayKey = (d)=>{
@@ -164,8 +165,14 @@ export const getAllUsersData = async (req,res)=> {
 export const deleteUser = async (req, res) => {
   try {
     const {id} = req.params
-    const deleted =  await userModel.findByIdAndDelete(id)
-    if(!deleted) return res.status(404).json({success:false, error:"User not found"})
+    let deletes =false
+    const goal_delete = await goalModel.findByIdAndDelete(id)
+    if(goal_delete) deletes =true
+    const txns_delete = await transactionModel.findByIdAndDelete(id)
+    if(txns_delete) deletes =true
+    const user_delete =  await userModel.findByIdAndDelete(id)
+    if(user_delete) deletes = true 
+    if(!deletes) return res.status(404).json({success:false, error:"User not found"})
     res.status(200).json({success:true, message:"User deleted successfully"})
   } catch (error) {
     console.error("Delete user error",error)
