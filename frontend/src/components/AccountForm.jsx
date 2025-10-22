@@ -83,7 +83,7 @@ export const AccountForm = ({ user, onEdit }) => {
             onChange={handleChange}
             className="w-full p-3 pt-5 border border-gray-300 
             rounded-md 
-            dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-600"
+            dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-600 placeholder:text-sm sm:placeholder:text-lg"
           />
           <button
             type="button"

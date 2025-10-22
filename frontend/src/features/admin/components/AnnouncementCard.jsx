@@ -74,7 +74,7 @@ export const AnnouncementCard = ({
         <div className="flex flex-wrap items-center justify-end gap-2 text-xs">
           {priority && (
             <span
-              className={`px-2 py-1 rounded-full font-medium ${priority.bg} ${priority.text}`}
+              className={`px-2 py-1 rounded-full font-medium text-center ${priority.bg} ${priority.text}`}
             >
               {priority.label}
             </span>

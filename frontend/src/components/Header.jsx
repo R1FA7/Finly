@@ -21,17 +21,35 @@ const Header = () => {
     setPermissions,
   } = useContext(AppContext);
 
+  useEffect(() => {
+    if (!isLoggedIn) {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    } else {
+      if (theme === "light") {
+        document.documentElement.classList.add("light");
+        document.documentElement.classList.remove("dark");
+      } else {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      }
+    }
+  }, [isLoggedIn, theme]);
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   //for closing by clicking anywhere in the screen
 
   const mobileMenuRef = useRef(null);
+  const hamburgerRef = useRef(null);
+
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (
-        isMobileMenuOpen &&
         mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(event.target)
+        !mobileMenuRef.current.contains(event.target) &&
+        hamburgerRef.current &&
+        !hamburgerRef.current.contains(event.target)
       )
         setIsMobileMenuOpen(false);
     };
@@ -151,6 +169,7 @@ const Header = () => {
           {/* Mobile menu button */}
           {isLoggedIn && (
             <button
+              ref={hamburgerRef}
               className="md:hidden text-3xl text-gray-700 dark:text-gray-100 focus:outline-none"
               onClick={() => setIsMobileMenuOpen((prev) => !prev)}
               aria-label="Toggle menu"
@@ -177,7 +196,7 @@ const Header = () => {
       {/* Mobile Nav */}
       {isLoggedIn && isMobileMenuOpen && (
         <div
-          className="md:hidden mt-2 bg-white dark:bg-gray-900 p-4 absolute right-4 top-20 z-50 w-48 shadow-xl rounded-lg"
+          className="md:hidden mt-2 bg-white dark:bg-gray-800 p-4 absolute right-4 top-20 z-50 w-48 shadow-xl rounded-lg"
           ref={mobileMenuRef}
         >
           <ul className="flex flex-col gap-2">

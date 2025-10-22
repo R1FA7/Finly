@@ -122,7 +122,7 @@ export const AnnouncementPage = () => {
     <div className="space-y-6">
       {/* Message Form */}
       <div
-        className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 transition-all ${
+        className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 sm:p-6 transition-all max-w-full ${
           showMessageForm && "ring-2 ring-blue-500"
         }`}
       >
@@ -144,7 +144,7 @@ export const AnnouncementPage = () => {
                   content: e.target.value,
                 });
               }}
-              className="w-full bg-transparent text-2xl text-gray-900 dark:text-white placeholder-gray-500 placeholder:whitespace-normal placeholder:text-base sm:placeholder:text-2xl focus:outline-none resize-none"
+              className="w-full max-w-full bg-transparent text-base sm:text-2xl text-gray-900 dark:text-white placeholder:text-gray-500 focus:outline-none resize-none break-words overflow-hidden"
               rows={showMessageForm ? 3 : 1}
             />
 

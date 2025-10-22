@@ -7,8 +7,8 @@ export const IncomePage = () => {
 
   const summaryCardConfig = {
     summaryCardClass: {
-      card1: "bg-green-50 border border-green-200 text-green-600 w-[170px]",
-      card2: "bg-green-100 border border-green-300 text-green-700 w-[170px]",
+      card1: "bg-green-50 border border-green-200 text-green-600 w-full",
+      card2: "bg-green-100 border border-green-300 text-green-700 w-full",
     },
     icon1: <ArrowTrendingUpIcon />,
     icon2: <TrophyIcon />,

@@ -11,7 +11,7 @@ export const AnnoucementForm = ({
   loading,
 }) => {
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 w-full max-w-full overflow-hidden">
       {/* Title */}
       <input
         type="text"
@@ -20,7 +20,7 @@ export const AnnoucementForm = ({
         onChange={(e) =>
           setMessageForm({ ...messageForm, title: e.target.value })
         }
-        className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-lg text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full max-w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-lg text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
       {/* Priority Selection */}
@@ -28,7 +28,7 @@ export const AnnoucementForm = ({
         <label className="text-sm text-gray-700 dark:text-gray-300 block mb-2">
           Priority
         </label>
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           {["low", "medium", "high"].map((level) => (
             <label
               key={level}
@@ -67,7 +67,7 @@ export const AnnoucementForm = ({
         <label className="text-sm text-gray-700 dark:text-gray-300 block mb-2">
           Send To
         </label>
-        <div className="flex gap-4">
+        <div className="flex gap-4 flex-wrap">
           {["all", "specific"].map((type) => (
             <label
               key={type}
@@ -193,7 +193,7 @@ export const AnnoucementForm = ({
               expiresAt: e.target.value,
             })
           }
-          className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-lg text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full max-w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-lg text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
         />
       </div>
 

@@ -10,8 +10,8 @@ export const ExpensePage = () => {
 
   const summaryCardConfig = {
     summaryCardClass: {
-      card1: "bg-red-50 border border-red-200 text-red-600 w-[170px]",
-      card2: "bg-red-100 border border-red-300 text-red-700 w-[170px]",
+      card1: "bg-red-50 border border-red-200 text-red-600 w-full",
+      card2: "bg-red-100 border border-red-300 text-red-700 w-full",
     },
     icon1: <ArrowTrendingDownIcon />,
     icon2: <ExclamationTriangleIcon />,

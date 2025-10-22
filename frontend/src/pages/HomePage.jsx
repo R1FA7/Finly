@@ -84,7 +84,6 @@ export const HomePage = () => {
       console.error("Failed to dismiss notification:", error);
     }
   };
-  console.log("HOMEPAGE", announcements);
   if (loading) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
@@ -96,7 +95,7 @@ export const HomePage = () => {
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-136px)] text-center px-4 relative">
       {/* notification container(needed for showing 2 notification together)  */}
       {/* container remains top-25 but notification comes space-y-3  */}
-      <div className="absolute bottom-10 left-5 z-50 space-y-3">
+      <div className="absolute bottom-10 left-5 z-50 space-y-3 pointer-events-none">
         {["income", "expense"].map((type) => {
           const goal = goals?.[type];
           const showNotification =
@@ -127,6 +126,7 @@ export const HomePage = () => {
         })}
         {announcements?.map((announcement) => (
           <Notification
+            type="general"
             key={announcement._id}
             messageId={announcement._id}
             onClose={(messageId) => handleClose(messageId)}

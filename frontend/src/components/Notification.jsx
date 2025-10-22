@@ -1,4 +1,8 @@
-import { ExclamationCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  BellAlertIcon,
+  ExclamationCircleIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 
 export const Notification = ({
@@ -15,7 +19,7 @@ export const Notification = ({
     income: {
       bar: "bg-emerald-500",
       iconBg: "bg-emerald-500",
-      text: "text-emerald-800",
+      text: "text-emerald-950",
       border: "border-emerald-200",
       hover: "hover:text-emerald-700",
     },
@@ -24,7 +28,14 @@ export const Notification = ({
       iconBg: "bg-red-500",
       text: "text-red-800",
       border: "border-red-200",
-      hover: "hover:text-red-700",
+      hover: "hover:text-red-900",
+    },
+    general: {
+      bar: "bg-teal-500",
+      iconBg: "bg-teal-500",
+      text: "text-slate-800",
+      border: "border-teal-200",
+      hover: "hover:text-teal-700",
     },
   };
 
@@ -33,23 +44,27 @@ export const Notification = ({
 
   return (
     <div
-      className={`bg-white border ${colors.border} ${colors.text} shadow-lg px-4 py-3 rounded-md flex items-center w-fit max-w-sm space-x-3 relative`}
+      className={`bg-white/50 border ${colors.border} ${colors.text} shadow-lg px-4 py-3 rounded-md flex items-center w-fit max-w-sm space-x-3 relative pointer-events-auto`}
     >
       <div
         className={`absolute left-0 top-0 h-full w-1 ${colors.bar} rounded-l-md`}
       />
 
-      <div className="w-2" />
-
-      <ExclamationCircleIcon
-        className={`w-6 h-6 p-1 rounded-full ${colors.iconBg} text-white flex-shrink-0 cursor-pointer`}
-        onClick={() => {
-          if (callFor !== "announcement") {
+      {callFor === "announcement" ? (
+        <BellAlertIcon
+          className={`w-6 h-6 p-1 rounded-full ${colors.iconBg} text-white flex-shrink-0`}
+        />
+      ) : (
+        <ExclamationCircleIcon
+          title="info"
+          className={`w-6 h-6 p-1 rounded-full ${colors.iconBg} text-white flex-shrink-0 cursor-pointer hover:scale-150`}
+          onClick={() => {
             navigate("/dashboard");
             if (typeof onClose === "function") onClose();
-          }
-        }}
-      />
+          }}
+          aria-label="Notification info"
+        />
+      )}
 
       <p className="text-sm font-medium flex-1">
         {callFor === "announcement" ? (
@@ -73,7 +88,11 @@ export const Notification = ({
         }}
         aria-label="Close notification"
       >
-        <XMarkIcon className="w-4 h-4" />
+        <XMarkIcon
+          className="w-4 h-4 cursor-pointer text-red-500 hover:scale-150 rounded-full border-2"
+          aria-label="Dismiss Notification"
+          title="dismiss"
+        />
       </button>
     </div>
   );
