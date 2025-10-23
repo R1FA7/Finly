@@ -16,8 +16,7 @@ const Chatbot = () => {
       : [
           {
             role: "assistant",
-            content:
-              "Hi! I'm Finly Assistant. Ask me anything about using Finly!",
+            content: "Hi! I'm FinBot. Ask me anything about using Finly!",
           },
         ];
   });
