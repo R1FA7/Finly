@@ -42,5 +42,8 @@ export const API_PATHS = {
     GET_ADMIN_MSG: `${BASE_API}/admin/messages`,
     DELETE_MSG: (id) => `${BASE_API}/admin/messages/${id}`,
     DEACTIVATE_MSG: (id) => `${BASE_API}/admin/messages/${id}`,
+  },
+  CHAT:{
+    CHATBOT:`${BASE_API}/chatbot`
   }
 }

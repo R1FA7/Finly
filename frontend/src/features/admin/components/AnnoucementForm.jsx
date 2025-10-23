@@ -11,7 +11,7 @@ export const AnnoucementForm = ({
   loading,
 }) => {
   return (
-    <div className="space-y-5 w-full max-w-full overflow-hidden">
+    <div className="space-y-5 w-full max-w-full">
       {/* Title */}
       <input
         type="text"
@@ -145,7 +145,7 @@ export const AnnoucementForm = ({
               ))}
           </div>
 
-          {/* Selected user badges */}
+          {/* Selected user chips */}
           {messageForm.targetUsers.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-2">
               {messageForm.targetUsers.map((userId) => {

@@ -1,7 +1,7 @@
 import {
   ArrowDownTrayIcon,
-  PlusCircleIcon,
   MagnifyingGlassIcon,
+  PlusCircleIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useRef } from "react";
 import { Button } from "./Button";
@@ -91,7 +91,7 @@ export const TransactionPage = ({
       {/* Summary Section */}
       <div className="bg-white rounded-lg shadow-md p-4 m-1.5 border border-gray-200 dark:bg-gray-900">
         <div className="flex flex-col md:flex-row justify-center items-center md:items-center gap-6 mb-6">
-          <div className="flex flex-wrap justify-center gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-5 w-full">
             <SummaryCard
               icon={icon1}
               title={label1}

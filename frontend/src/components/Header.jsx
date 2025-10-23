@@ -63,6 +63,7 @@ const Header = () => {
       localStorage.removeItem("dismissed-income-notification");
       localStorage.removeItem("dismissed-expense-notification");
       localStorage.removeItem("access_token");
+      localStorage.removeItem("chat_history");
       setIsLoggedIn(false);
       updateUser(null);
       setPermissions([]);

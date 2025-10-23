@@ -22,7 +22,13 @@ export const ROLE_PERMISSIONS = {
   ],
   'admin':[
     'adminDashboard.view',
-    'transaction.view','dashboard.view',
+    'transaction.view',
+    'transaction.create',
+    'transaction.edit',
+    'transaction.delete',
+    'transaction.download',
+    'goal.manage',
+    'dashboard.view',
   ]
 }
 export function getPermissionsForRole(role){

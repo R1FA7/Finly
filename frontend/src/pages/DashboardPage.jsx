@@ -216,24 +216,24 @@ export const DashboardPage = () => {
           Add Transaction
         </Button>
         <div className="flex flex-col md:flex-row justify-center items-center md:items-center gap-6 mb-6">
-          <div className="flex justify-center gap-2 flex-wrap">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-1 md:gap-2 lg:grid-cols-5 lg:gap-2 md:w-full">
             <SummaryCard
               icon={<ScaleIcon />}
               title="Total Balance"
               value={dashboardStats?.totalBalance}
-              className="bg-slate-50 border border-slate-200 text-slate-800 w-[175px]"
+              className="bg-slate-50 border border-slate-200 text-slate-800 "
             />
             <SummaryCard
               icon={<ArrowTrendingUpIcon />}
               title="Total Income"
               value={dashboardStats?.totalIncome}
-              className="bg-green-50 border border-green-200 text-green-600 w-[175px]"
+              className="bg-green-50 border border-green-200 text-green-600 "
             />
             <SummaryCard
               icon={<ArrowTrendingDownIcon />}
               title="Total Expense"
               value={dashboardStats?.totalExpense}
-              className="bg-red-50 border border-red-200 text-red-600 w-[175px]"
+              className="bg-red-50 border border-red-200 text-red-600"
             />
             <SummaryCard
               icon={<ArrowTrendingUpIcon />}
@@ -241,7 +241,7 @@ export const DashboardPage = () => {
               value={
                 dashboardStats?.incomeVsExpense?.weekly?.income?.total || 0
               }
-              className="bg-green-50 border border-green-200 text-green-600 w-[175px]"
+              className="bg-green-50 border border-green-200 text-green-600 "
             />
             <SummaryCard
               icon={<ArrowTrendingDownIcon />}
@@ -249,7 +249,7 @@ export const DashboardPage = () => {
               value={
                 dashboardStats?.incomeVsExpense?.weekly?.expense?.total || 0
               }
-              className="bg-red-50 border border-red-200 text-red-600 w-[175px]"
+              className="bg-red-50 border border-red-200 text-red-600 w-"
             />
             {/* <SummaryCard
               icon={<ArrowTrendingUpIcon />}

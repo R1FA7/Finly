@@ -6,12 +6,12 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { LoadingSpinner } from "../components/loaders/LoadingSpinner";
-import { AppContext } from "../context/AppContext";
-import { AdminNavbar } from "../features/admin/components/AdminNavbar";
-import { useLoader } from "../hooks/useLoader";
-import { API_PATHS } from "../utils/apiPaths";
-import axiosInstance from "../utils/axiosInstance";
+import { LoadingSpinner } from "../../../components/loaders/LoadingSpinner";
+import { AppContext } from "../../../context/AppContext";
+import { useLoader } from "../../../hooks/useLoader";
+import { API_PATHS } from "../../../utils/apiPaths";
+import axiosInstance from "../../../utils/axiosInstance";
+import { AdminNavbar } from "../components/AdminNavbar";
 
 const navItems = [
   {
@@ -55,7 +55,7 @@ export const AdminPage = () => {
     try {
       const res = await axiosInstance.get(API_PATHS.ADMIN.GET_ADMIN_MSG);
       if (res.data.success) {
-        toast.success("Fetched all admin message successfully");
+        // toast.success("Fetched all admin message successfully");
         setAdminMessages(res?.data?.data);
         console.log(res?.data?.data);
       }

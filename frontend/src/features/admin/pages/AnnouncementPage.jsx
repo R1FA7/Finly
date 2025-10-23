@@ -126,7 +126,7 @@ export const AnnouncementPage = () => {
           showMessageForm && "ring-2 ring-blue-500"
         }`}
       >
-        <div className="flex gap-4">
+        <div className="flex gap-4 flex-col md:flex-row items-center md:items-start">
           {/* Avatar */}
           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex-shrink-0 flex items-center justify-center">
             <UserIcon className="w-6 h-6 text-white" />
@@ -135,7 +135,7 @@ export const AnnouncementPage = () => {
           {/* Form Content */}
           <div className="flex-1">
             <textarea
-              placeholder="What's the announcement?"
+              placeholder="What's Up?"
               value={messageForm.content}
               onClick={() => setShowMessageForm(true)}
               onChange={(e) => {
@@ -144,7 +144,7 @@ export const AnnouncementPage = () => {
                   content: e.target.value,
                 });
               }}
-              className="w-full max-w-full bg-transparent text-base sm:text-2xl text-gray-900 dark:text-white placeholder:text-gray-500 focus:outline-none resize-none break-words overflow-hidden"
+              className="text-center w-full max-w-full bg-transparent text-base sm:text-2xl text-gray-900 dark:text-white placeholder:text-gray-500 focus:outline-none resize-none break-words overflow-hidden"
               rows={showMessageForm ? 3 : 1}
             />
 

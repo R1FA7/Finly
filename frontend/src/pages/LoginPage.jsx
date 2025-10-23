@@ -51,6 +51,11 @@ export const LoginPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-135px)] px-4 text-center">
+      <p className="text-xs mb-2">
+        For admin login use
+        <br />
+        Email: admin@finly.com, Password: 123456
+      </p>
       <div className="bg-white dark:bg-slate-950 text-gray-800 dark:text-gray-100 rounded-lg w-full max-w-md p-8 shadow-xl transition-colors">
         <h2 className="text-2xl font-bold mb-6">
           {register ? "Create Account" : "Login"}
