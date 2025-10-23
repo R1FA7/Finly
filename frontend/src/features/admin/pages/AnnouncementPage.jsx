@@ -86,8 +86,9 @@ export const AnnouncementPage = () => {
 
   // Handle message deactivation
   const handleDeactivateMessage = async (messageId) => {
-    withBtnLoading("deactivateBtn", async () => {
+    withBtnLoading(`deactivateBtn-${messageId}`, async () => {
       try {
+        // await new Promise((resolve) => setTimeout(resolve, 5000));
         const res = await axiosInstance.patch(
           API_PATHS.ADMIN.DEACTIVATE_MSG(messageId)
         );
@@ -103,8 +104,9 @@ export const AnnouncementPage = () => {
   };
 
   const handleDeleteMessage = async (messageId) => {
-    withBtnLoading("deleteMsgBtn", async () => {
+    withBtnLoading(`deleteMsgBtn-${messageId}`, async () => {
       try {
+        await new Promise((resolve) => setTimeout(resolve, 5000));
         const res = await axiosInstance.delete(
           API_PATHS.ADMIN.DELETE_MSG(messageId)
         );

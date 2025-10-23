@@ -116,10 +116,10 @@ export const AnnouncementCard = ({
         {msg.isActive ? (
           <button
             onClick={() => onDeactivate(msg._id)}
-            disabled={loading.deactivateBtn}
+            disabled={loading[`deactivateBtn-${msg._id}`]}
             className="text-red-500 hover:text-red-400 hover:bg-red-500/10 px-3 py-1 rounded-md transition disabled:opacity-60"
           >
-            {loading.deactivateBtn ? (
+            {loading[`deactivateBtn-${msg._id}`] ? (
               <ButtonLoader text="Deactivating" />
             ) : (
               "Deactivate"
@@ -128,10 +128,14 @@ export const AnnouncementCard = ({
         ) : (
           <Button
             onClick={() => onDelete(msg._id)}
-            disabled={loading.deleteMsgBtn}
+            disabled={loading[`deleteMsgBtn-${msg._id}`]}
             className="bg-red-500/10 text-red-500 hover:bg-red-500/20"
           >
-            {loading.deleteMsgBtn ? <ButtonLoader text="Deleting" /> : "Delete"}
+            {loading[`deleteMsgBtn-${msg._id}`] ? (
+              <ButtonLoader text="Deleting" />
+            ) : (
+              "Delete"
+            )}
           </Button>
         )}
       </div>
