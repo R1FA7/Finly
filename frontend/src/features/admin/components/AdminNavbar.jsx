@@ -1,6 +1,7 @@
+import { NavLink } from "react-router-dom";
 import AdminInfoCard from "./AdminInfoCard";
 
-export const AdminNavbar = ({ navItems, activeTab, onNavClick }) => {
+export const AdminNavbar = ({ navItems }) => {
   return (
     <>
       {/* Desktop Sidebar */}
@@ -8,19 +9,21 @@ export const AdminNavbar = ({ navItems, activeTab, onNavClick }) => {
         <AdminInfoCard />
         <div className="mt-10 space-y-2">
           {navItems.map((item) => (
-            <button
+            <NavLink
               key={item.id}
-              onClick={() => onNavClick(item.id)}
-              className={`w-full text-left px-5 py-3 flex items-center gap-3 transition-colors
-                ${
-                  activeTab === item.id
-                    ? "bg-blue-100 dark:bg-slate-700 text-blue-600 dark:text-white font-semibold"
-                    : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                }`}
+              to={`/admin/${item.id}`}
+              className={({ isActive }) =>
+                `w-full text-left px-5 py-3 flex items-center gap-3 transition-colors
+                 ${
+                   isActive
+                     ? "bg-blue-100 dark:bg-slate-700 text-blue-600 dark:text-white font-semibold"
+                     : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                 }`
+              }
             >
               {item.icon}
               <span>{item.label}</span>
-            </button>
+            </NavLink>
           ))}
         </div>
       </aside>
@@ -29,19 +32,21 @@ export const AdminNavbar = ({ navItems, activeTab, onNavClick }) => {
       <div className="fixed z-20 bottom-0 left-0 right-0 md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-md">
         <div className="flex justify-around">
           {navItems.map((item) => (
-            <button
+            <NavLink
               key={item.id}
-              onClick={() => onNavClick(item.id)}
-              className={`flex-1 py-3 flex flex-col items-center gap-1 transition-colors
+              to={`/admin/${item.id}`}
+              className={({
+                isActive,
+              }) => `flex-1 py-3 flex flex-col items-center gap-1 transition-colors
                 ${
-                  activeTab === item.id
+                  isActive
                     ? "text-blue-600 dark:text-blue-400 bg-gray-100 dark:bg-gray-700/50 font-semibold"
                     : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                 }`}
             >
               {item.icon}
               <span className="text-xs">{item.label}</span>
-            </button>
+            </NavLink>
           ))}
         </div>
       </div>

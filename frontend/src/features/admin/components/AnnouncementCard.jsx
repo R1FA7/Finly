@@ -1,8 +1,8 @@
 import { UserIcon } from "@heroicons/react/24/outline";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
-import { Button } from "../../../components/Button";
-import { ButtonLoader } from "../../../components/loaders/ButtonLoader";
+import { Button } from "../../common/components/Button";
+import { ButtonLoader } from "../../common/components/loaders/ButtonLoader";
 import { MessageBadges } from "./MessageBadges";
 
 export const AnnouncementCard = ({

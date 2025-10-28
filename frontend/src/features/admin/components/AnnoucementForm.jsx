@@ -1,5 +1,5 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { ButtonLoader } from "../../../components/loaders/ButtonLoader";
+import { ButtonLoader } from "../../common/components/loaders/ButtonLoader";
 
 export const AnnoucementForm = ({
   messageForm,

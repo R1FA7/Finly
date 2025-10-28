@@ -54,14 +54,14 @@ export const AnnouncementPage = () => {
             expiresAt: new Date(messageForm.expiresAt).toISOString(),
           }),
         };
-        console.log(payload);
+        console.log("payload", payload);
 
         const res = await axiosInstance.post(
           API_PATHS.ADMIN.SEND_MESSAGE,
           payload
         );
 
-        if (res.data.success) {
+        if (res?.data?.success) {
           toast.success("Announcement posted successfully");
           setMessageForm({
             title: "",
@@ -72,7 +72,7 @@ export const AnnouncementPage = () => {
             expiresAt: "",
           });
           setShowMessageForm(false);
-          setAnnouncements((prev = []) => [payload, ...prev]);
+          setAnnouncements((prev) => [payload, ...(prev || [])]);
           await fetchAdminMessages();
         }
       } catch (error) {
@@ -106,7 +106,7 @@ export const AnnouncementPage = () => {
   const handleDeleteMessage = async (messageId) => {
     withBtnLoading(`deleteMsgBtn-${messageId}`, async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        //await new Promise((resolve) => setTimeout(resolve, 5000));
         const res = await axiosInstance.delete(
           API_PATHS.ADMIN.DELETE_MSG(messageId)
         );
@@ -121,10 +121,13 @@ export const AnnouncementPage = () => {
     });
   };
   return (
-    <div className="space-y-6">
+    <>
       {/* Message Form */}
+      <h1 className="text-4xl font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">
+        Announcements
+      </h1>
       <div
-        className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 sm:p-6 transition-all max-w-full ${
+        className={`mb-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 sm:p-6 transition-all max-w-full ${
           showMessageForm && "ring-2 ring-blue-500"
         }`}
       >
@@ -185,6 +188,6 @@ export const AnnouncementPage = () => {
           ))
         )}
       </div>
-    </div>
+    </>
   );
 };

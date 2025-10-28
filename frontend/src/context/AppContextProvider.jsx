@@ -38,12 +38,12 @@ export const AppContextProvider = (props) => {
         axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO),
         axiosInstance.get(API_PATHS.AUTH.EXTRACT_MSG),
       ]);
-      if (userRes.data.success) {
-        setUser(userRes.data.user);
-        setPermissions(userRes.data.permissions);
+      if (userRes?.data?.success) {
+        setUser(userRes.data.data.user);
+        setPermissions(userRes.data.data.permissions);
         setIsLoggedIn(true);
       }
-      if (msgRes.data.success) setAnnouncements(msgRes?.data?.data);
+      if (msgRes?.data?.success) setAnnouncements(msgRes.data.data);
     } catch (error) {
       console.log("Failed to fetch user info:", error);
       setIsLoggedIn(false);

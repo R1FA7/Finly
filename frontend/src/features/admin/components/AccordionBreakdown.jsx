@@ -1,5 +1,5 @@
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { LineBreakDownChart } from "../../../components/charts/LineBreakDownChart";
+import { LineBreakDownChart } from "../../common/components/charts/LineBreakDownChart";
 
 export const AccordionBreakdown = ({ isOpen, data, type, onToggle }) => {
   const iconColor = "text-blue-400";

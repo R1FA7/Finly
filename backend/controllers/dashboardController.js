@@ -1,10 +1,9 @@
 import mongoose, { isValidObjectId } from "mongoose";
 import goalModel from "../models/goalModel.js";
 import transactionModel from "../models/transactionModel.js";
-
-//Dashboard->TB,TI,TE,Recent txns, Only Exp, Last months exp, income last 30days , (+search bar, +breakdown bar)
-//Income -> last 7 days income bar, income source, add income(new one will be added in bar), download,
-//Expense-> same
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from '../utils/asyncHandler.js';
 
 const extractDayKey = (d)=>{
   return d.toISOString().split("T")[0];
@@ -123,159 +122,141 @@ const parseDate = (dateStr) =>{
   const d = new Date(dateStr)
   return isNaN(d.getTime()) ? null : d;
 }
-export const getDashboardData = async (req, res) => {
-  try {
-    const userId = req.user?.id;
+export const getDashboardData = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
 
-    if (!isValidObjectId(userId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid User ID",
-      });
-    }
+  if (!isValidObjectId(userId)) throw new ApiError(400,'Invalid User ID')
 
-    const {search="", type, source, minAmount, maxAmount, startDate, endDate} = req.query
+  const {search="", type, source, minAmount, maxAmount, startDate, endDate} = req.query
 
-    const baseMatch = {userId: new mongoose.Types.ObjectId(userId)}
+  const baseMatch = {userId: new mongoose.Types.ObjectId(userId)}
 
-    if(search) baseMatch.source={$regex:search, $options: "i"}
+  if(search) baseMatch.source={$regex:search, $options: "i"}
 
-    if(type) baseMatch.type=type
+  if(type) baseMatch.type=type
 
-    if(source) baseMatch.source=source 
+  if(source) baseMatch.source=source 
 
-    if(minAmount || maxAmount){
-      baseMatch.amount={}
-      if(minAmount) baseMatch.amount.$gte=Number(minAmount)
-      if(maxAmount) baseMatch.amount.$lte=Number(maxAmount)
+  if(minAmount || maxAmount){
+    baseMatch.amount={}
+    if(minAmount) baseMatch.amount.$gte=Number(minAmount)
+    if(maxAmount) baseMatch.amount.$lte=Number(maxAmount)
 
-      if(Object.keys(baseMatch.amount).length===0) delete baseMatch.amount 
-    }
-    const parsedStartDate = parseDate(startDate)
-    const parsedEndDate = parseDate(endDate)
-    if(parsedStartDate || parsedEndDate){
-      baseMatch.date = {}
-      if(parsedStartDate) baseMatch.date.$gte = parsedStartDate
-      if(parsedEndDate) baseMatch.date.$lte = parsedEndDate
-    }
-    
-    // Total income & expense
-    
-    const searchFilteredTxns = await transactionModel.find(baseMatch).sort({date:-1})
-    
-    
-    const {total:totalIncome} = await getTotalAmounts(userId, "income")
-    const {total: totalExpense} = await getTotalAmounts(userId, "expense")
-    const totalBalance = totalIncome - totalExpense
-
-    //Recent(last 10) txns
-    const last10Txns = await transactionModel.find({userId}).sort({date:-1}).limit(10)
-
-    const now = new Date();
-    const last7Days = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    const last60Days = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const startOfYear = new Date(now.getFullYear(), 0, 1);
-
-    // Last 7 & 30 days income/expense
-    const [lastWeeksIncome, lastWeeksExpense, lastMonthsIncome, lastMonthsExpense] = await Promise.all([
-      getTotalAmounts(userId, "income", last7Days),
-      getTotalAmounts(userId, "expense", last7Days),
-      getTotalAmounts(userId, "income", last30Days),
-      getTotalAmounts(userId, "expense", last30Days)
-    ]);
-
-    // Yearly, Monthly, Weekly breakdowns
-    const [yearlyBreakdown, monthlyBreakdown, weeklyBreakdown] = await Promise.all([
-      getFullBreakDown(userId, "year"),
-      getFullBreakDown(userId, "month"),
-      getFullBreakDown(userId, "week"),
-    ]);
-
-    //sources
-    const incomeSources = await transactionModel.distinct("source",{type:"income",userId:userId})
-    const expenseSources = await transactionModel.distinct("source",{type:"expense",userId:userId})
-
-    //Goals
-    //latest goal (income & expense)
-    const [incomeGoal, expenseGoal] = await Promise.all([
-      goalModel.findOne({userId, type:"income"}).sort({createdAt:-1}).lean(),
-      goalModel.findOne({userId, type:"expense"}).sort({createdAt: -1}).lean()
-    ])
-
-    const [incomeGoalCurData, expenseGoalCurData] = await Promise.all([
-      incomeGoal 
-      ? getTotalAmounts(userId, "income", incomeGoal.startDate, incomeGoal.endDate,"goal")
-      : {total : 0},
-      expenseGoal
-      ? getTotalAmounts(userId, "expense", expenseGoal.startDate, expenseGoal.endDate,"goal")
-      : {total : 0}
-    ])
-
-    res.status(200).json({
-      success: true,
-      message: "Dashboard Data fetched successfully",
-      data: {
-        totalBalance,
-        totalIncome,
-        totalExpense,
-        incomeSources,
-        expenseSources,
-        goals:{
-          income: incomeGoal 
-            ? {
-                ...incomeGoal,
-                currentAmount: incomeGoalCurData.total,
-                remaining: incomeGoal.amount - incomeGoalCurData.total
-              }
-            : {
-                amount: 0,
-                currentAmount: 0,
-                remaining: 0,
-                startDate: null,
-                endDate: null,
-              },
-          expense: expenseGoal
-            ? {
-                ...expenseGoal,
-                currentAmount: expenseGoalCurData.total,
-                remaining: expenseGoal.amount - expenseGoalCurData.total
-              }
-            : {
-                amount: 0,
-                currentAmount: 0,
-                remaining: 0,
-                startDate: null,
-                endDate: null,
-              }
-        },
-        incomeVsExpense: {
-          weekly: {
-            income: lastWeeksIncome,
-            expense: lastWeeksExpense,
-          },
-          monthly: {
-            income: lastMonthsIncome,
-            expense: lastMonthsExpense,
-          }
-        },
-        recentTransactions: last10Txns,
-        searchFilteredTxns,
-        breakdowns: {
-          yearly: yearlyBreakdown,
-          monthly: monthlyBreakdown, 
-          weekly: weeklyBreakdown, 
-        },
-      },
-    });
-
-  } catch (error) {
-    console.error("Dashboard error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-      errors: error.message,
-    });
+    if(Object.keys(baseMatch.amount).length===0) delete baseMatch.amount 
   }
-};
+  const parsedStartDate = parseDate(startDate)
+  const parsedEndDate = parseDate(endDate)
+  if(parsedStartDate || parsedEndDate){
+    baseMatch.date = {}
+    if(parsedStartDate) baseMatch.date.$gte = parsedStartDate
+    if(parsedEndDate) baseMatch.date.$lte = parsedEndDate
+  }
+  
+  // Total income & expense
+  
+  const searchFilteredTxns = await transactionModel.find(baseMatch).sort({date:-1})
+  
+  
+  const {total:totalIncome} = await getTotalAmounts(userId, "income")
+  const {total: totalExpense} = await getTotalAmounts(userId, "expense")
+  const totalBalance = totalIncome - totalExpense
+
+  //Recent(last 10) txns
+  const last10Txns = await transactionModel.find({userId}).sort({date:-1}).limit(10)
+
+  const now = new Date();
+  const last7Days = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const last60Days = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startOfYear = new Date(now.getFullYear(), 0, 1);
+
+  // Last 7 & 30 days income/expense
+  const [lastWeeksIncome, lastWeeksExpense, lastMonthsIncome, lastMonthsExpense] = await Promise.all([
+    getTotalAmounts(userId, "income", last7Days),
+    getTotalAmounts(userId, "expense", last7Days),
+    getTotalAmounts(userId, "income", last30Days),
+    getTotalAmounts(userId, "expense", last30Days)
+  ]);
+
+  // Yearly, Monthly, Weekly breakdowns
+  const [yearlyBreakdown, monthlyBreakdown, weeklyBreakdown] = await Promise.all([
+    getFullBreakDown(userId, "year"),
+    getFullBreakDown(userId, "month"),
+    getFullBreakDown(userId, "week"),
+  ]);
+
+  //sources
+  const incomeSources = await transactionModel.distinct("source",{type:"income",userId:userId})
+  const expenseSources = await transactionModel.distinct("source",{type:"expense",userId:userId})
+
+  //Goals
+  //latest goal (income & expense)
+  const [incomeGoal, expenseGoal] = await Promise.all([
+    goalModel.findOne({userId, type:"income"}).sort({createdAt:-1}).lean(),
+    goalModel.findOne({userId, type:"expense"}).sort({createdAt: -1}).lean()
+  ])
+
+  const [incomeGoalCurData, expenseGoalCurData] = await Promise.all([
+    incomeGoal 
+    ? getTotalAmounts(userId, "income", incomeGoal.startDate, incomeGoal.endDate,"goal")
+    : {total : 0},
+    expenseGoal
+    ? getTotalAmounts(userId, "expense", expenseGoal.startDate, expenseGoal.endDate,"goal")
+    : {total : 0}
+  ])
+
+  const data= {
+      totalBalance,
+      totalIncome,
+      totalExpense,
+      incomeSources,
+      expenseSources,
+      goals:{
+        income: incomeGoal 
+          ? {
+              ...incomeGoal,
+              currentAmount: incomeGoalCurData.total,
+              remaining: incomeGoal.amount - incomeGoalCurData.total
+            }
+          : {
+              amount: 0,
+              currentAmount: 0,
+              remaining: 0,
+              startDate: null,
+              endDate: null,
+            },
+        expense: expenseGoal
+          ? {
+              ...expenseGoal,
+              currentAmount: expenseGoalCurData.total,
+              remaining: expenseGoal.amount - expenseGoalCurData.total
+            }
+          : {
+              amount: 0,
+              currentAmount: 0,
+              remaining: 0,
+              startDate: null,
+              endDate: null,
+            }
+      },
+      incomeVsExpense: {
+        weekly: {
+          income: lastWeeksIncome,
+          expense: lastWeeksExpense,
+        },
+        monthly: {
+          income: lastMonthsIncome,
+          expense: lastMonthsExpense,
+        }
+      },
+      recentTransactions: last10Txns,
+      searchFilteredTxns,
+      breakdowns: {
+        yearly: yearlyBreakdown,
+        monthly: monthlyBreakdown, 
+        weekly: weeklyBreakdown, 
+      },
+    }
+  res.status(200).json(new ApiResponse(200,data,'Dashboard data fetched successfully'))
+})

@@ -3,6 +3,7 @@ import cors from "cors"
 import "dotenv/config"
 import express from "express"
 import connectDB from "./config/mongodb.js"
+import { errorHandler } from "./middleware/errorHandler.js"
 import adminRouter from "./routes/adminRoutes.js"
 import authRouter from "./routes/authRoutes.js"
 import chatbotRouter from "./routes/chatbotRoutes.js"
@@ -34,6 +35,9 @@ app.use('/api/v1/dashboard', dashboardRouter)
 app.use('/api/v1/goal', goalRouter)
 app.use('/api/v1/admin',adminRouter)
 app.use('/api/v1/chatbot',chatbotRouter)
+
+app.use(errorHandler)
+
 app.listen(port, ()=>{
   console.log(`server started in Port ${port}`)
 })

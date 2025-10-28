@@ -1,27 +1,23 @@
 import goalModel from "../models/goalModel.js";
-export const createGoal = async(req,res)=>{
-  try {
-    const userId = req.user?.id 
-    const {type, startDate, endDate, amount} = req.body 
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { goalValidationSchema } from "../validation/goalValidation.js";
 
-    const goal = await goalModel.create({
-      userId,
-      type,
-      startDate,
-      endDate,
-      amount
-    })
+export const createGoal = asyncHandler(async(req,res)=>{
+  const userId = req.user?.id 
+  const {type, startDate, endDate, amount} = req.body 
 
-    res.status(201).json({
-      success: true,
-      message: "Goal updated successfullly",
-      data: goal,
-    })
-  } catch (error) {
-    console.error("goal creation error",error)
-    res.status(500).json({
-      success: false,
-      message: "server error"
-    })
-  }
-}
+  await goalValidationSchema.validate({
+    type, startDate, endDate, amount
+  }, {abortEarly: false })
+
+  const goal = await goalModel.create({
+    userId,
+    type,
+    startDate,
+    endDate,
+    amount
+  })  
+
+  res.status(201).json(new ApiResponse(201, goal, 'Goal created successfully'))
+})

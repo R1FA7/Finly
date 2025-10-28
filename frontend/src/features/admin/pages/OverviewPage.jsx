@@ -7,8 +7,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { SummaryCard } from "../../../components/SummaryCard";
-import { TransactionList } from "../../../components/TransactionList";
+import { SummaryCard } from "../../common/components/SummaryCard";
+import { TransactionList } from "../../common/components/TransactionList";
 import { AccordionBreakdown } from "../components/AccordionBreakdown";
 
 export const OverviewPage = () => {
@@ -20,9 +20,12 @@ export const OverviewPage = () => {
   });
 
   return (
-    <div className="space-y-6">
+    <div>
+      <h1 className="text-4xl font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">
+        Overview
+      </h1>
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-4">
+      <div className="mb-2 grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-4">
         <SummaryCard
           icon={<UserGroupIcon />}
           title="Total Users"

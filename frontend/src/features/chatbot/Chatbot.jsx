@@ -45,10 +45,10 @@ const Chatbot = () => {
         userMessage: input,
       });
 
-      if (response.data.success) {
+      if (response?.data?.success) {
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: response.data.response },
+          { role: "assistant", content: response.data.data.response },
         ]);
       } else {
         setMessages((prev) => [
@@ -100,7 +100,16 @@ const Chatbot = () => {
       )}
 
       {isOpen && (
-        <div className="fixed bottom-20 md:bottom-6 left-6 w-70 md:w-96 h-[500px] bg-black/20 dark:bg-black/50 rounded-lg shadow-2xl flex flex-col z-50 border border-gray-200 dark:border-gray-700">
+        <div
+          className="
+            fixed bottom-20 md:bottom-6 left-6
+            w-70 md:w-96 h-[500px]
+            bg-gradient-to-br from-gray-900/70 via-gray-800/60 to-gray-800/50
+            backdrop-blur-lg
+            rounded-lg shadow-2xl flex flex-col z-50
+            border border-gray-200/20 dark:border-gray-700/30
+          "
+        >
           <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-gray-100 p-4 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center gap-2">
               <ChatBubbleLeftEllipsisIcon className="w-5 h-5" />
@@ -148,7 +157,7 @@ const Chatbot = () => {
           </div>
 
           <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <input
                 type="text"
                 value={input}
@@ -160,7 +169,7 @@ const Chatbot = () => {
                   }
                 }}
                 placeholder="Ask me anything..."
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-700 dark:text-white"
+                className="flex-1 min-w-0 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-700 dark:text-white"
                 disabled={loading}
               />
               <button

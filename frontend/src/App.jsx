@@ -4,23 +4,23 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import Layout from "./components/Layout";
-import ProtectedRoute from "./components/ProtectedRoute";
-import PublicRoute from "./components/PublicRoute";
 import { AdminPage } from "./features/admin/pages/AdminPage";
 import { AnnouncementPage } from "./features/admin/pages/AnnouncementPage";
 import { OverviewPage } from "./features/admin/pages/OverviewPage";
 import { UsersPage } from "./features/admin/pages/UsersPage";
-import { DashboardPage } from "./pages/DashboardPage";
-import { ExpensePage } from "./pages/ExpensePage";
-import { HomePage } from "./pages/HomePage";
-import { IncomePage } from "./pages/IncomePage";
-import { LandingPage } from "./pages/LandingPage";
-import { LoginPage } from "./pages/LoginPage";
-import { ResetPasswordPage } from "./pages/ResetPasswordPage";
-import UnauthorizedPage from "./pages/UnauthorizedPage";
-import { UpdateProfilePage } from "./pages/UpdateProfilePage";
-import { VerifyEmailPage } from "./pages/VerifyEmailPage";
+import { LoginPage } from "./features/auth/pages/LoginPage";
+import { ResetPasswordPage } from "./features/auth/pages/ResetPasswordPage";
+import { UpdateProfilePage } from "./features/auth/pages/UpdateProfilePage";
+import { VerifyEmailPage } from "./features/auth/pages/VerifyEmailPage";
+import Layout from "./features/common/components/Layout";
+import ProtectedRoute from "./features/common/components/ProtectedRoute";
+import PublicRoute from "./features/common/components/PublicRoute";
+import { HomePage } from "./features/common/pages/HomePage";
+import { LandingPage } from "./features/common/pages/LandingPage";
+import UnauthorizedPage from "./features/common/pages/UnauthorizedPage";
+import { DashboardPage } from "./features/dashboard/pages/DashboardPage";
+import { ExpensePage } from "./features/transaction/pages/ExpensePage";
+import { IncomePage } from "./features/transaction/pages/IncomePage";
 
 const router = createBrowserRouter([
   {

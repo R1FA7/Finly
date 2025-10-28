@@ -179,8 +179,10 @@ export const useTransactionManager =
 
   //step3 : nah delete that sh..
   const handleConfirmedDelete = async () =>{
-    withBtnLoading("deleteTxn",async ()=>{
+    const btnKey = "Delete"
+    withBtnLoading(btnKey,async ()=>{
       try {
+      //await new Promise(resolve=>setTimeout(resolve,5000))
       const res = await axiosInstance.delete(
         API_PATHS.TRANSACTION.DELETE(selectedTxnId)
       );

@@ -1,6 +1,10 @@
 import goalModel from "../models/goalModel.js";
 import transactionModel from "../models/transactionModel.js";
 import userModel from "../models/userModel.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from '../utils/asyncHandler.js';
+
 const extractDayKey = (d)=>{
   return d.toISOString().split("T")[0];
 }
@@ -77,121 +81,141 @@ const getFullBreakDown = async (unit) =>{
   return []
 }
 
-export const getAllUsersData = async (req,res)=> {
-  //see each individual users,search, filter
-  //total income/expense across users
-  //Most common income/expense sources
-  //Grpah of weekly/monthly/yearly trends of all users
-  //Total number of goals set & achieved
-  //Txn logs:view who added,edited or deleted a txn
-  //admin creates a message via a form, saved in a messages collection & displayed as a banner or alert on user dashboard
-  //NEXT: CHATBOT(react-chatbot-kit, BotUI)
-  //Help onboard new users (show how to add a transaction, explain graphs)
-  //Act as a help center (FAQs, goal tips)
-  //Let users ask questions like: “How much did I spend on food this month?”
+// export const getAllUser = async(req,res)=>{
+//   const search = req.query.search
+//   const page = parseInt(req.query.page) || 1
+//   const limit = parseInt(req.query.limit) || 5
+//   const skip = (page-1)* limit 
+//   try{
+//     const query={}
+//     if(search){
+//       query.$or = [
+//         {
+//           name: {
+//             $regex: search,
+//             $options: "i"
+//           },
+//           email: {
+//             $regex: search,
+//             $options: "i"
+//           }
+//         }
+//       ]
+//     }
+//     const users = await userModel.find(query).select("-password").skip(skip).limit(limit)
+//     const totalUsers = await userModel.countDocuments(query)
+//     res.status(200).json({
+//       success: true,
+//       users,
+//       pagination:{
+//         total: totalUsers,
+//         page,
+//         limit,
+//         totalPages: Math.ceil(totalUsers/limit)
+//       }
+//     }) 
+//   } catch(error){
+//     console.error("Error in getting users:", error);
+//     res.status(500).json({success:false, error: "Server error. Please try again later." });
+//   }
+// }
+
+export const getAllUsersData = asyncHandler(async (req,res)=> {
   //all users
   const search = req.query.search
-  try{
-    const query={}
-    if(search){
-      query.$or = [
-        {
-          name: {
-            $regex: search,
-            $options: "i"
-          },
-          email: {
-            $regex: search,
-            $options: "i"
-          }
-        }
-      ]
-    }
-    const users = await userModel.find(query ? query : {}).select("-password")
-    //Total income/expense across users 
-    const totalIncomeExpense = await transactionModel.aggregate([
+  const page = parseInt(req.query.page) || 1
+  const limit = parseInt(req.query.limit) || 5
+  const skip = (page-1)* limit 
+  const query={}
+  if(search){
+    query.$or = [
       {
-        $group:{
-          _id:"$type",
-          totalAmount: {
-            $sum:"$amount"
-          }
+        name: {
+          $regex: search,
+          $options: "i"
+        },
+        email: {
+          $regex: search,
+          $options: "i"
         }
       }
-    ])
-    //most common income/expense sources
-    const commonSources = await transactionModel.aggregate([
-      {
-        $group: {
-          _id: {
-            source:"$source",
-            type:"$type"
-          },
-          count:{$sum:1},
-          totalAmount:{$sum:"$amount"}
+    ]
+  }
+  const users = await userModel.find(query).select("-password").skip(skip).limit(limit)
+  const totalUsers = await userModel.countDocuments(query)
+
+  //Total income/expense across users 
+  const totalIncomeExpense = await transactionModel.aggregate([
+    {
+      $group:{
+        _id:"$type",
+        totalAmount: {
+          $sum:"$amount"
         }
-      },
-      {$sort: {count:-1}},
-      { $limit: 10},
-    ])
-    //week/month/yearly breakdown full data
-    const [yearlyBreakdown, monthlyBreakdown, weeklyBreakdown] = await Promise.all([
-      getFullBreakDown("year"),
-      getFullBreakDown("month"),
-      getFullBreakDown("week")
-    ]);
-    //Txn logs(recent)
-    const recentLogs = await transactionModel.find().populate("userId","name email")
-    //console.log(recentLogs)
-    //const logs = await transactionModel.find()
-    //console.log("LOGS",logs)
-    res.status(200).json({
-      success: true,
-      users,
-      totalIncomeExpense,
-      commonSources,
-      breakdowns:{
-        yearly:yearlyBreakdown,
-        monthly: monthlyBreakdown,
-        weekly: weeklyBreakdown
-      },
-      recentLogs
-    }) 
-  } catch(error){
-    console.error("Error in getAllUsersData:", error);
-    res.status(500).json({success:false, error: "Server error. Please try again later." });
-  }
-}
-export const deleteUser = async (req, res) => {
-  try {
-    const {id} = req.params
-    let deletes =false
-    const goal_delete = await goalModel.findByIdAndDelete(id)
-    if(goal_delete) deletes =true
-    const txns_delete = await transactionModel.findByIdAndDelete(id)
-    if(txns_delete) deletes =true
-    const user_delete =  await userModel.findByIdAndDelete(id)
-    if(user_delete) deletes = true 
-    if(!deletes) return res.status(404).json({success:false, error:"User not found"})
-    res.status(200).json({success:true, message:"User deleted successfully"})
-  } catch (error) {
-    console.error("Delete user error",error)
-    res.status(500).json({
-      success:false,
-      error:"Failed to delete user"
-    })
-  }
-}
-
-export const updateUser = async (req, res) => {
+      }
+    }
+  ])
+  //most common income/expense sources
+  const commonSources = await transactionModel.aggregate([
+    {
+      $group: {
+        _id: {
+          source:"$source",
+          type:"$type"
+        },
+        count:{$sum:1},
+        totalAmount:{$sum:"$amount"}
+      }
+    },
+    {$sort: {count:-1}},
+    { $limit: 10},
+  ])
+  //week/month/yearly breakdown full data
+  const [yearlyBreakdown, monthlyBreakdown, weeklyBreakdown] = await Promise.all([
+    getFullBreakDown("year"),
+    getFullBreakDown("month"),
+    getFullBreakDown("week")
+  ]);
+  //Txn logs(recent)
+  const recentLogs = await transactionModel.find().populate("userId","name email")
+  //console.log(recentLogs)
+  //const logs = await transactionModel.find()
+  //console.log("LOGS",logs)
+  const data = {
+    users,
+    pagination: {
+      totalUsers,
+      page,
+      limit,
+      totalPages: Math.ceil(totalUsers / limit),
+    },
+    totalIncomeExpense,
+    commonSources,
+    breakdowns: {
+      yearly: yearlyBreakdown,
+      monthly: monthlyBreakdown,
+      weekly: weeklyBreakdown,
+    },
+    recentLogs,
+  };
+  res.status(200).json(new ApiResponse(200, data, 'Admin data fetched successfully'))
+})
+export const deleteUser = asyncHandler(async (req, res) => {
   const {id} = req.params
-  try {
-    const updated = await userModel.findByIdAndUpdate(id, req.body, {new: true})
-    if(!updated) return res.status(404).json({ error: "User not found." })
-    res.status(200).json({ success: true, message: "User updated successfully.", user: updated });
+  let deletes =false
+  const goal_delete = await goalModel.findByIdAndDelete(id)
+  if(goal_delete) deletes =true
+  const txns_delete = await transactionModel.findByIdAndDelete(id)
+  if(txns_delete) deletes =true
+  const user_delete =  await userModel.findByIdAndDelete(id)
+  if(user_delete) deletes = true 
+  if(!deletes) throw new ApiError(404, 'User not found')
+  res.status(200).json(new ApiResponse(200,null, 'User deleted successfully'))
+})
 
-  } catch (error) {
-    console.error("Update user error:", err);
-    res.status(500).json({ error: "Failed to update user." });
-  }
-}
+export const updateUser = asyncHandler(async (req, res) => {
+  const {id} = req.params
+  const user = await userModel.findByIdAndUpdate(id, req.body, {new: true})
+  if(!user) throw new ApiError(404, 'User not found')
+  res.status(200).json(new ApiResponse(200,user, 'User updated successfully'))
+})
