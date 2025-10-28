@@ -1,4 +1,4 @@
-# Finly 💰
+# Finly 
 
 Finly is a full-stack MERN (MongoDB, Express.js, React, Node.js) application for managing personal finances. It allows users to track income and expenses, view real-time financial analytics, and manage their account with secure authentication and authorization features.
 
@@ -10,7 +10,9 @@ Finly is a full-stack MERN (MongoDB, Express.js, React, Node.js) application for
 
 - 🔐 JWT-based authentication with access & refresh tokens  
 - ✅ Email verification via OTP  
-- 🔁 Password reset via email OTP  
+- 🔁 Password reset via email OTP
+- 👥 RBAC(Role-Based Access Control) authorization
+- 🤖 AI-powered RAG chatbot for instant FAQ assistance
 - 📊 Interactive dashboard with real-time analytics  
 - 📅 Weekly, monthly, and yearly breakdowns  
 - 📁 Export transaction data to Excel  
@@ -18,7 +20,8 @@ Finly is a full-stack MERN (MongoDB, Express.js, React, Node.js) application for
 - 📈 Dynamic charts and visualizations  
 - 🧠 Global state management with React Context API  
 - ⚙️ Modular and validated RESTful APIs  
-
+- 🎨 Dark/Light theme support
+- 🔔 Set income/expense goal and notified when exceeded 
 ---
 
 ## 🛠️ Tech Stack
@@ -38,6 +41,13 @@ Finly is a full-stack MERN (MongoDB, Express.js, React, Node.js) application for
 - Nodemailer (for OTP emails)
 - Yup (backend validation)
 
+**AI/ML**
+- Groq API (LLM for chatbot)
+- HuggingFace Embeddings (semantic search)
+- LangChain (RAG pipeline)
+- Vector similarity search
+
+  
 **Other Tools**
 - Railway (deployment)
 - xlsx (Excel export)
@@ -54,18 +64,36 @@ Finly is a full-stack MERN (MongoDB, Express.js, React, Node.js) application for
 
 ---
 
-- **Transaction Management**
-  - Add, update, delete income and expense transactions
-  - Normalize and validate transaction data for consistency
-  - Advanced filtering and searching by type, source, amount, and date
+### **Transaction Management**
+- Add, update, delete income and expense transactions
+- Normalize and validate transaction data for consistency
+- Advanced filtering and searching by type, source, amount, and date
 
-- **Interactive Dashboard**
-  - Real-time financial analytics with breakdowns by week, month, and year
-  - Dynamic charts to visualize income vs expenses
-  - Recent transaction summaries with quick insights
+### **Interactive Dashboard**
+- Real-time financial analytics with breakdowns by week, month, and year
+- Dynamic charts to visualize income vs expenses
+- Recent transaction summaries with quick insights
+- Category-wise and source-wise spending analysis
 
-- **Data Export & Reporting**
-  - Download transaction details as Excel (.xlsx) files for offline analysis
+### **AI Chatbot Assistant** 🤖
+- RAG-powered intelligent FAQ system
+- Semantic search for accurate answers
+- Contextual responses about Finly features
+- Real-time chat interface with typing indicators
+
+### **Goal Tracking**
+- Set financial savings goals with deadlines
+- Track progress with visual indicators
+- Calculate daily/weekly/monthly saving requirements
+
+### **Data Export & Reporting**
+- Download transaction details as Excel (.xlsx) files for offline analysis
+- Generate custom reports with date range filters
+
+### **Admin Panel**
+- User management and analytics
+- System-wide announcements
+- Role-based access control
 ---
 
 ## 🧪 Run Locally
@@ -111,6 +139,10 @@ SMTP_USER
 SMTP_PASS
 SENDER_EMAIL
 VITE_BACKEND_URL = 'http://localhost:3000'
+
+# AI Chatbot (FREE APIs)
+GROQ_API_KEY=your_groq_api_key
+HUGGINGFACE_API_KEY=your_huggingface_token
 ```
 
 ---
