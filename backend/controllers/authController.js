@@ -34,7 +34,7 @@ export const register = asyncHandler(async(req,res)=> {
   const access_token = jwt.sign(
     {id:user._id, role: user.role},
     process.env.JWT_SECRET,
-    {expiresIn:'15m'}
+    {expiresIn:'30m'}
   );
 
   const refresh_token = jwt.sign(
@@ -86,7 +86,7 @@ export const login = asyncHandler(async(req,res) =>{
   const access_token = jwt.sign(
     { id: user._id, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: '1m' }
+    { expiresIn: '30m' }
   );
 
   const refresh_token = jwt.sign(
